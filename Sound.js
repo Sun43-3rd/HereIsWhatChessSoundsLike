@@ -41,19 +41,26 @@ export const notes = [
   'PianoSBC/G6.mp3', 'PianoSBC/Gsharp6.mp3',
   'PianoSBC/A6.mp3', 'PianoSBC/Asharp6.mp3',
   'PianoSBC/B6.mp3',
-  'PianoSBC/C7.mp3', 'PianoSBC/Csharp7.mp3',
+  'PianoSBC/C7.mp3','PianoSBC/Csharp7.mp3',
   'PianoSBC/D7.mp3', 'PianoSBC/Dsharp7.mp3',
   'PianoSBC/E7.mp3',
   'PianoSBC/F7.mp3', 'PianoSBC/Fsharp7.mp3',
   'PianoSBC/G7.mp3', 'PianoSBC/Gsharp7.mp3',
   'PianoSBC/A7.mp3', 'PianoSBC/Asharp7.mp3',
   'PianoSBC/B7.mp3',
-  'PianoSBC/C8.mp3'
+  'PianoSBC/C8.mp3', 'PianoSBC/Csharp8.mp3',
+  'PianoSBC/D8.mp3', 'PianoSBC/Dsharp8.mp3',
+  'PianoSBC/E8.mp3',
+  'PianoSBC/F8.mp3', 'PianoSBC/Fsharp8.mp3',
+  'PianoSBC/G8.mp3', 'PianoSBC/Gsharp8.mp3',
+  'PianoSBC/A8.mp3', 'PianoSBC/Asharp8.mp3',
+  'PianoSBC/B8.mp3',
+ 
 ];
   
  export const mappings =
   {
-    'Default (C Major)': [
+    'C Major': [
       36, 38, 40, 41, 43, 45, 47, 48,
       35, 37, 39, 40, 42, 44, 46, 47,
       33, 35, 37, 38, 40, 42, 44, 45,
