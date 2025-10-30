@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>soundbored</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+
+  body{
+    background: rgb(25, 25, 25);
+    color: #eee3dd;
+    font-family: "Roboto Mono";
+    width: 100%;
+  }
+  #all{
+    position: relative;
+    width: inherit;
+    height: inherit;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(8, 50px);
+    grid-template-rows: repeat(8, 50px);
+    gap: 5px; 
+    width: max-content;
+    height: max-content;
+    justify-items: center;
+    align-items: center;
+  }
+  .square {
+    width: 50px;
+    height: 50px;
+    background-color: black;
+    border: 1px solid #eee3dd ;
+    cursor: pointer;
+    color: #eee3dd;
+    font-size: medium;
+    display: flex;
+    flex-direction: row;
+    justify-content:center;
+    align-items: center;
+  }
+  .main{
+    display: flex;
+    flex-direction: column;
+    row-gap: 50px;
+  }
+  
+#pgnView [contenteditable] {
+  display: inline-block;        
+  width: 350px;                 
+  min-height: 10px;             
+  height: auto;                 
+  padding: 2px;                
+  border: 1px solid rgb(159, 159, 159);       
+  white-space: pre-wrap;        
+  overflow-wrap: break-word;    
+  box-sizing: border-box;       
+  outline: none;  
+  font-family: Verdana, sans-serif;
+  font: 200;
+  color: white;            
+}
+
+#gameURL{
+  min-width: 165px;
+}
+
+.objectA{
+  width: 200px;
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
+  max-height: 30px;
+}
+
+.boredHeader{
+  display: flex;
+  width: 97%;
+  flex-direction: row;
+  column-gap: 25px;
+  height: 30px;
+  position: relative;
+  left: -4px;
+  justify-content: space-between;
+}
+
+.bored{
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  
+}
+
+.switch {
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    position: relative;
+    background-color: rgb(214, 214, 214);
+    border-radius: 34px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+
+  .switch::before {
+    content: "";
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    height: 26px;
+    width: 26px;
+    background-color: rgb(159, 159, 159);
+    border-radius: 50%;
+    transition: transform 0.2s;
+  }
+
+
+  .switch.on {
+    background-color: rgb(128, 0, 255);
+  }
+
+
+  .switch.on::before {
+    transform: translateX(26px);
+  }
+
+ .wrapperHorizontal{
+  display: flex;
+  column-gap: 10px;
+  align-items: center;
+ }
+
+ .knob{
+  box-sizing: border-box;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: x-large;
+ }
+
+ .container{
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    left: -10px;
+    padding-top: 10px;
+
+ }
+ 
+ #btn-container{
+
+    display: flex;
+    justify-content: space-between;
+    
+    width : 420px;
+ }
+
+ #pgn-container{
+    position: relative;
+    top: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    row-gap: 25px;
+    width : 425px;
+    max-width: 500px;
+    left: -10px;
+ }
+
+ .pgnBox{
+  font-size: small;
+  border: 1px solid white;
+  width: 100%;
+  position: relative;
+  top: -15px;
+ }
+
+ .settings{
+
+  font-size: 24px;
+ }
+
+ .settings-content {
+  display: none;
+  position: absolute;
+  background-color: #000000;
+  min-width: 110px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.settings-content div {
+  color: rgb(255, 255, 255);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+#settings-colors div {
+  color: rgb(255, 255, 255);
+
+  display: flex;
+  flex-direction: column;
+  row-gap: 2px;
+  font-size: 14px
+
+}
+
+.settings-content div a{
+  color: rgb(255, 255, 255);
+  font-size: 10px;
+}
+
+.settings-content div:hover {background-color: rgb(128, 0, 255);}
+
+.show {display:block;}
+
+.edit-soundGridclass{
+  display: none;
+  width: 175px;
+  align-self: flex-end;
+  position: relative;
+}
+
+</style>
+</head>
+<body>
+  <div id="all">
+    <div class="main">
+      <div class="bored"> 
+        <div class="boredHeader">
+          <select id="map" type="dropdown">
+            <option>Default (C Major)</option>
+            <option>Direct</option>
+            <option>C Major (Middle)</option>
+            <option>Circle of Fifths</option>
+          </select>
+          <div class="objectA">
+            
+          </div>
+          <div class="settings">
+           <i id="btn-settings" class="fa fa-gear fa-spin"></i>
+              <div id="settings-dropdown" class="settings-content">
+                <div id="settings-edit">
+                    <span> Edit </span>
+                </div>
+                <div id="settings-gif">
+                  <span> GIF </span>
+                  <a href="https://www.chess.com/gifs"> Chess.com </a>
+                </div>
+                <div id="settings-colors">
+                  <span> Colors : </span>
+                  <div>
+                   <span>Start</span> 
+                   <input id="settings-color" type="color" value="rgb(128, 0, 255)">
+                  </div>
+                  <div>
+                    <span> End</span>
+                    <input id="settings-color2" type="color" value="rgb(43, 1, 127)">
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+        <form id="edit-soundGrid" class="edit-soundGridclass">
+            <label> Save Changes </label>
+            <input type="checkbox">
+        </form>
+        <div class="container">
+          <div class="grid" id="soundGrid"></div>
+        </div>
+        <div class="wrapperHorizontal">
+          <div class="wrapperHorizontal">
+            <span>On/Off Guides</span>
+            <div class="switch on" id="toggleGuides"></div>
+          </div>
+          <div class="wrapperHorizontal">
+            <span>Switch Guides</span>
+            <div class="switch" id="switchGuides"></div> 
+          </div>
+          <div class="knob" id="rotateBored">🗘</div>
+        </div>
+      </div>
+      
+    </div>
+    <div id="pgn-container">
+      <span> PGN : </span>
+      <span id="pgnView"  class="pgnBox" contenteditable="true"></span>
+      <div id="btn-container">
+        <input type="file" id="pgnFileInput" />
+        <button id="startButton">Start Playing</button>
+        <button id="process">Download</button>
+      </div>
+    </div>
+  </div>
+<script src="Square.js" type="module"></script>
+<script src="download.js" type="module"></script>
+</body>
+</html>
