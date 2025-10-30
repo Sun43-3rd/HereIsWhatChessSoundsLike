@@ -12,6 +12,9 @@ import * as Ear from './Sound.js'
   const settings = document.getElementById('btn-settings')
   const settingsEdit = document.getElementById('settings-edit')
   const settingsGIF = document.getElementById('settings-gif')
+  const settingsResetColor = document.getElementById('settings-resetColor')
+  const settingsRecord = document.getElementById('settings-record')
+
   const defaultcolor = () => {return hexToRgb(document.getElementById('settings-color').value)}
   const defaultcolor2 = () => {return hexToRgb(document.getElementById('settings-color2').value)}
   const settingsEdit_control = document.getElementById("edit-soundGrid")
@@ -245,6 +248,12 @@ settingsGIF.addEventListener('click', () => {
   navigator.clipboard.writeText(pgnView.innerText);
   alert("Copied Current PGN " + pgnView.innerText);
 })
+settingsResetColor.addEventListener('click', () => {
+  squares.map((x) => 
+    { 
+      x.style.backgroundColor = 'black';
+  })
+})
 
 
 settingsEdit_control.lastElementChild.addEventListener('click', () => {
@@ -273,9 +282,26 @@ window.onclick = function(event) {
 } 
 
 start.addEventListener('click', async () => {
-  StartMusic(undefined, [] , '1', [], '1')
+  
+  if(settingsRecord.lastElementChild.checked){
+    
+    startCapture()
+
   }
+  StartMusic(undefined, [] , '0.5', [], '1.4')
+}
 )
 
 
 
+async function startCapture() {
+  try {
+    const stream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
+    const [track] = stream.getVideoTracks();
+    const restrictionTarget = await RestrictionTarget.fromElement(bored);
+    await track.restrictTo(restrictionTarget);
+    videoElem.srcObject = stream;
+  } catch (err) {
+    console.error(err);
+  }
+}
