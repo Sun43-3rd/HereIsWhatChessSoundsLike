@@ -7,13 +7,14 @@ import * as Ear from './Sound.js'
   const switchGuides = document.getElementById('switchGuides')
   const rotateBored = document.getElementById('rotateBored')
   const map = document.getElementById('map')
+  const soundBank = document.getElementById('soundBank')
+  const soundlength = document.getElementById('soundBank-duration')
   const start = document.getElementById('startButton')
   
   const settings = document.getElementById('btn-settings')
   const settingsEdit = document.getElementById('settings-edit')
   const settingsGIF = document.getElementById('settings-gif')
   const settingsResetColor = document.getElementById('settings-resetColor')
-  const settingsRecord = document.getElementById('settings-record')
 
   const defaultcolor = () => {return hexToRgb(document.getElementById('settings-color').value)}
   const defaultcolor2 = () => {return hexToRgb(document.getElementById('settings-color2').value)}
@@ -28,7 +29,7 @@ import * as Ear from './Sound.js'
 
   const pgn_ids = (text) => {return text !== undefined ? pgnInput : FormatPGN(pgnView.innerText)}
   const squares = [] 
-  const sounds = () => {return Ear.mappings?.[map.selectedOptions[0].label].map((x) => Ear.notes[x])}
+  const sounds = () => {return Ear.mappings?.[map.selectedOptions[0].label].map((x) => Ear.notes?.[soundBank.selectedOptions[0].label]?.[soundlength.selectedOptions[0].label][x])}
 
 export const retrieve = (square_ar, timelapse_ar, tmlpse = '0.5', duration_ar, drt = '0.5') => {
     const movements = square_ar !== undefined ? square_ar : pgn_ids().flat(2).map((x) => squares.find((y) => y.id === x)).filter((x) => x !== undefined)
@@ -59,33 +60,32 @@ function ColorIncrement(color, endColor){
    return `rgb(${array_1.map((x, i) =>  Number(x) + (Number(difference[i]) / 3 )).join(',')})`
   }
 
-function squareClick(square, duration = 2){
+function squareClick(square, duration){
 
    if (toggleGuides.value = 0){
 
     square.text = [square.soundname(), square.id][switchGuides.value]
   
   }
+  
 
-
-      console.log(square.style.backgroundColor, ColorIncrement(square.style.backgroundColor, defaultcolor2()))
-      
       square.style.backgroundColor = (square.style.backgroundColor === 'black' || square.style.backgroundColor === '') ? defaultcolor() : ColorIncrement(square.style.backgroundColor, defaultcolor2())
       const a = square.sound()
-      
-      console.log(a)
-
-      a.play()
-      
-      setTimeout(() => {
-          
-        a.pause();
-          
-        a.currentTime = 0; 
-      }, duration * 1000);
+console.log(square.soundname(), a)
+      playSound(a, (duration === undefined ? 1 : 1))
      
 }
 
+async function playSound(sound, duration){
+ await sound.play()
+      
+      setTimeout( async () => {
+          
+       await sound.pause();
+          
+        sound.fastSeek(0); 
+      }, duration * 1000);
+}
 
 function FormatPGN(text){
   return text.substring(text.indexOf('1.')).split(/\d+\.\s*/).filter(Boolean).map(x => x.trim().split(' ').map((y, i) => 
@@ -121,7 +121,7 @@ for (let i = 0; i < 64; i++) {
     square.className = 'square';
     square.id = Ear.squares_id[i]
     square.text.innerText = square.id
-    square.soundname = () => `${sounds()[i].replace('PianoSBC/', '').replace('.mp3', '').replace('sharp', '#')}`;
+    square.soundname = () => `${sounds()[i].replace(`PianoSBC/${soundBank.selectedOptions[0].label}${(soundlength.selectedOptions[0].label === 'Medium' ? '' : '_')}${(soundlength.selectedOptions[0].label === 'Medium' ? '' : soundlength.selectedOptions[0].label)} - `, '').replace('.wav', '').replace('sharp', '#')}`;
     square.sound = () => new Audio(sounds()[i]);
     square.soundfile = () => sounds()[i]; 
 
@@ -215,7 +215,7 @@ settingsEdit.addEventListener('click',  () => {
       event.preventDefault()
       const index = squares.findIndex((square) => document.activeElement === square) + 1
       squares.at((index > 63 ? 0 : index)).focus()
-      const newnote = Ear.notes.findIndex((x) => x.includes(squares[index - 1].innerText.toUpperCase().replace('#', 'sharp')))
+      const newnote = Ear.notes?.[soundBank.selectedOptions[0].label]?.[soundlength.selectedOptions[0].label].findIndex((x) => x.includes(squares[index - 1].innerText.toUpperCase().replace('#', 'sharp')))
       console.log(newnote)
       Ear.mappings[UserMap.innerText].splice(index - 1, 0, newnote)
       
@@ -255,7 +255,6 @@ settingsResetColor.addEventListener('click', () => {
   })
 })
 
-
 settingsEdit_control.lastElementChild.addEventListener('click', () => {
   if(settingsEdit_control.lastElementChild.checked){
     settingsEdit_control.style.display = 'none'
@@ -283,24 +282,41 @@ window.onclick = function(event) {
 
 start.addEventListener('click', async () => {
   
-  if(settingsRecord.lastElementChild.checked){
-    
-    startCapture()
-
-  }
   StartMusic(undefined, [] , '0.5', [], '1.4')
+
 }
 )
 
-
-
 async function startCapture() {
+
+  const displayMediaOptions = {
+
+    video: {
+      
+      displaySurface: "window",
+
+    },
+
+    preferCurrentTab: true,
+
+  };
+
   try {
+
     const stream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
-    const [track] = stream.getVideoTracks();
+
+    const [vTrack] = stream.getVideoTracks();
+
+    const [aTrack] = stream.getAudioTracks();
+
     const restrictionTarget = await RestrictionTarget.fromElement(bored);
-    await track.restrictTo(restrictionTarget);
+
+    await vTrack.restrictTo(restrictionTarget);
+
+    await aTrack.restrictTo(restrictionTarget);
+
     videoElem.srcObject = stream;
+
   } catch (err) {
     console.error(err);
   }
