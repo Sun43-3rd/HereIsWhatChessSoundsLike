@@ -74,9 +74,9 @@ async function create(){
         
           const n_arraybuffer = await response.arrayBuffer()
 
-          const n_blob = new Blob([n_arraybuffer], {type : 'audio/mpeg'})
+          const n_blob = new Blob([n_arraybuffer], {type : 'audio/wav'})
 
-          const n_file = new File([n_blob], `${n_filename}.mp3`, { type: n_blob.type})
+          const n_file = new File([n_blob], `${n_filename}.wav`, { type: n_blob.type})
 
           const t_blob = await EWIG(1)
 
