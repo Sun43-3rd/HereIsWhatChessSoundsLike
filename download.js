@@ -60,11 +60,13 @@ return wavBlob
 
 async function create(){
 
-    const data = A.retrieve(undefined, [], '0.2', [], '1.4')
+    const data = A.PGN()
+    const movements = Object.values(data).map((x) => Object.values(x).map((y) => y.square)).filter((x) => x !== undefined)
+
 
     let files = []
 
-      for(let i = 0; i < data[0].length ; i++){
+      for(let i = 0; i < movements.length ; i++){
 
           const note = data[0][i]
 

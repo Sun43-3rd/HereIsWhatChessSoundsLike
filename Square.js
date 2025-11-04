@@ -14,11 +14,30 @@ import * as Ear from './Sound.js'
   const settings = document.getElementById('btn-settings')
   const settingsEdit = document.getElementById('settings-edit')
   const settingsGIF = document.getElementById('settings-gif')
+  const settingsTime_control = document.getElementById('settings-timeControl')
   const settingsResetColor = document.getElementById('settings-resetColor')
+  const settingsEdit_control = document.getElementById("edit-soundGrid")
+  const settingsEditTime_control = document.getElementById("edit-timeControl")
 
+
+  const timecontrol = document.getElementById('timeControl')
+  const timecontrol1 = document.getElementById('timeControl-duration1')
+  const timecontrol2 = document.getElementById('timeControl-duration2')
+  const timecontrol3 = document.getElementById('timeControl-timelapse1')
+  const timecontrol4 = document.getElementById('timeControl-timelapse2')
+  
+  const timecontrol1_output = document.getElementById('timeControl_duration-output')
+  const timecontrol3_output = document.getElementById('timeControl_timelapse-output')
+  
+
+  const timecontrol_durbtn = Array.prototype.filter.call(document.getElementById("timeControl-durationHolder").children, (x) => x.tagName === 'BUTTON')
+  const timecontrol_timbtn = Array.prototype.filter.call(document.getElementById("timeControl-timelapseHolder").children, (x) => x.tagName === 'BUTTON')
+
+
+  const defaultcolor3 = () => {return hexToRgb(document.getElementById('settings-color3').value)}
   const defaultcolor = () => {return hexToRgb(document.getElementById('settings-color').value)}
   const defaultcolor2 = () => {return hexToRgb(document.getElementById('settings-color2').value)}
-  const settingsEdit_control = document.getElementById("edit-soundGrid")
+  
   
 
   toggleGuides.value = 1;
@@ -26,6 +45,9 @@ import * as Ear from './Sound.js'
   rotateBored.value = 0;
   settings.value = 0;
   bored.editmode = false 
+
+  timecontrol1_output.textContent = timecontrol1.value;
+  timecontrol3_output.textContent = timecontrol1.value;
 
   const PGN = () => FormatPGN(pgnView.innerText)
   const squares = [] 
@@ -83,14 +105,14 @@ async function playSound(sound, duration){
 function FormatPGN(text){
 const a = text.substring(text.indexOf('1.')).split(/\d+\.\s*/)
 const b = a.filter(Boolean).map(x => x.trim().split(' '))
-const c = b.map((x, i) => x.map((y) => 
+const c = b.map((x) => x.map((y, i) => 
     y.toUpperCase().includes('O') ? 
     (y === 'O-O' ? (i === 0 ? ['G1', 'F1']: ['G8', 'F8']) : (i === 0 ? ['C8', 'D8']: ['C1', 'D1'])) :  
     Ear.squares_id.find((z) => y.toUpperCase().includes(z)))
 )
 
 let d = {};
-
+console.log(b, c)
   for(let i = 1; i < a.length ; i++){
 
     const line_array = b[i - 1]
@@ -131,57 +153,82 @@ function PieceNotation(move){
    return output.reverse()[search.reverse().findIndex((x) => move.includes(x))]
 }
 
-const Chess_Unicode = { 
-                  'White' : {  
-                      'Pawn' : String.fromCodePoint('9817'),
-                      'Knight' : String.fromCodePoint('9816'),
-                      'Bishop' : String.fromCodePoint('9815'),
-                      'Rook' : String.fromCodePoint('9814'),
-                      'Queen' : String.fromCodePoint('9813'),
-                      'King' : String.fromCodePoint('9812')
-                  },
-                  'Black' : {  
-                      'Pawn' : String.fromCodePoint('9823'),
-                      'Knight' : String.fromCodePoint('9822'),
-                      'Bishop' : String.fromCodePoint('9821'),
-                      'Rook' : String.fromCodePoint('9820'),
-                      'Queen' : String.fromCodePoint('9819'),
-                      'King' : String.fromCodePoint('9818')
-                  }
-                
-                }
- 
+
+const Chess_Unicode = {
+    Pawn: {
+        White: [String.fromCodePoint(0x2659), 'white'], 
+        Black: [String.fromCodePoint(0x265F), 'black'],
+    },
+    Knight: {
+        White: [String.fromCodePoint(0x2658), 'white'], 
+        Black: [String.fromCodePoint(0x265E), 'black'], 
+    },
+    Bishop: {
+        White: [String.fromCodePoint(0x2657), 'white'],
+        Black: [String.fromCodePoint(0x265D), 'black'], 
+    },
+    Rook: {
+        White: [String.fromCodePoint(0x2656), 'white'],
+        Black: [String.fromCodePoint(0x265C), 'black'], 
+    },
+    Queen: {
+        White: [String.fromCodePoint(0x2655), 'white'], 
+        Black: [String.fromCodePoint(0x265B), 'black'], 
+    },
+    King: {
+        White: [String.fromCodePoint(0x2654), 'white'],
+        Black: [String.fromCodePoint(0x265A), 'black'],
+    }
+};
+
+
 Chess_Unicode.initial = [
-  Chess_Unicode.Black.Rook,   Chess_Unicode.Black.Knight, Chess_Unicode.Black.Bishop,
-  Chess_Unicode.Black.Queen,  Chess_Unicode.Black.King,  Chess_Unicode.Black.Bishop,
-  Chess_Unicode.Black.Knight, Chess_Unicode.Black.Rook,
-  Chess_Unicode.Black.Pawn, Chess_Unicode.Black.Pawn, Chess_Unicode.Black.Pawn,
-  Chess_Unicode.Black.Pawn, Chess_Unicode.Black.Pawn, Chess_Unicode.Black.Pawn,
-  Chess_Unicode.Black.Pawn, Chess_Unicode.Black.Pawn,
-  '', '', '', '', '', '', '', '',
-  '', '', '', '', '', '', '', '',
-  '', '', '', '', '', '', '', '',
-  '', '', '', '', '', '', '', '',
-  Chess_Unicode.White.Pawn, Chess_Unicode.White.Pawn, Chess_Unicode.White.Pawn,
-  Chess_Unicode.White.Pawn, Chess_Unicode.White.Pawn, Chess_Unicode.White.Pawn,
-  Chess_Unicode.White.Pawn, Chess_Unicode.White.Pawn,
-  Chess_Unicode.White.Rook,   Chess_Unicode.White.Knight, Chess_Unicode.White.Bishop,
-  Chess_Unicode.White.Queen,  Chess_Unicode.White.King,  Chess_Unicode.White.Bishop,
-  Chess_Unicode.White.Knight, Chess_Unicode.White.Rook
+
+    Chess_Unicode.Rook.Black,
+    Chess_Unicode.Knight.Black,
+    Chess_Unicode.Bishop.Black,
+    Chess_Unicode.Queen.Black,
+    Chess_Unicode.King.Black,
+    Chess_Unicode.Bishop.Black,
+    Chess_Unicode.Knight.Black,
+    Chess_Unicode.Rook.Black,
+
+    Chess_Unicode.Pawn.Black,
+    Chess_Unicode.Pawn.Black,
+    Chess_Unicode.Pawn.Black,
+    Chess_Unicode.Pawn.Black,
+    Chess_Unicode.Pawn.Black,
+    Chess_Unicode.Pawn.Black,
+    Chess_Unicode.Pawn.Black,
+    Chess_Unicode.Pawn.Black,
+
+    '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '',
+
+    Chess_Unicode.Pawn.White,
+    Chess_Unicode.Pawn.White,
+    Chess_Unicode.Pawn.White,
+    Chess_Unicode.Pawn.White,
+    Chess_Unicode.Pawn.White,
+    Chess_Unicode.Pawn.White,
+    Chess_Unicode.Pawn.White,
+    Chess_Unicode.Pawn.White,
+
+    Chess_Unicode.Rook.White,
+    Chess_Unicode.Knight.White,
+    Chess_Unicode.Bishop.White,
+    Chess_Unicode.Queen.White,
+    Chess_Unicode.King.White,
+    Chess_Unicode.Bishop.White,
+    Chess_Unicode.Knight.White,
+    Chess_Unicode.Rook.White
 ];
-
-
 
 async function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
-
-async function StartMusic(movements, durations, timelapses){
-  
-
-}
-
-  
 
  
 for (let i = 0; i < 64; i++) {
@@ -190,8 +237,10 @@ for (let i = 0; i < 64; i++) {
     square.textbox = text
     square.className = 'square';
     square.id = Ear.squares_id[i]
-    square.textbox.innerText = square.id
-    square.piece = Chess_Unicode.initial[i]; 
+    square.textbox.innerText = square.id;
+
+    square.piece = Array(Chess_Unicode.initial[i]).flat(2)[0]; 
+    square.piececolor = Chess_Unicode.initial[i][1];
     square.soundname = () => `${soundmap()[i].replace(`PianoSBC/${soundBank.selectedOptions[0].label}${(soundlength.selectedOptions[0].label === 'Medium' ? '' : '_')}${(soundlength.selectedOptions[0].label === 'Medium' ? '' : soundlength.selectedOptions[0].label)} - `, '').replace('.wav', '').replace('sharp', '#')}`;
     square.getSound = () => {square.sound = new Audio(soundmap()[i])};
 
@@ -203,7 +252,7 @@ for (let i = 0; i < 64; i++) {
     
     square.addEventListener('click', async () => {
       
-      square.style.backgroundColor = (square.style.backgroundColor === 'black' || square.style.backgroundColor === '') ? defaultcolor() : ColorIncrement(square.style.backgroundColor, defaultcolor2())
+      square.style.backgroundColor = ['black', 'rgb(109, 60, 31)', 'tan', ''].includes(square.style.backgroundColor ) ? defaultcolor() : ColorIncrement(square.style.backgroundColor, defaultcolor2())
       
       playSound(square.sound)
 
@@ -223,8 +272,8 @@ Array.prototype.filter.call(switchGuides.children, (x) => x.id !== '').map((x) =
 
 function switchGuide(){
     if(toggleGuides.value === 1){
-      squares.map((x) => {
-        if(switchGuides.value == 3){x.textbox.style.fontSize = '32px'} else{x.textbox.style.fontSize = '16px'}
+      squares.map((x, i) => {
+        if(switchGuides.value == 3){x.textbox.style.fontSize = '40px'; x.textbox.style.color = x.piececolor; x.style.backgroundColor = toggle((toggle(x.id.at(1) % 2 == 0, true, false) ? i % 2 == 0 : Math.abs(i % 2 ) == 1) , true, false) ? 'rgb(109, 60, 31)' : 'tan'} else{x.textbox.style.fontSize = '16px'; x.textbox.style.color = 'white'}
         
         x.textbox.innerText = ['', x.id, x.soundname(), x.piece][switchGuides.value]
         }
@@ -286,11 +335,8 @@ settingsEdit.addEventListener('click',  () => {
         x.sound.pause()
         x.style.backgroundColor =  defaultcolor();
         x.setAttribute('contenteditable', 'true')
-        
   
       })
-
-  
 
       const UserMap = document.createElement('option')
       UserMap.innerText = `User_${map.options.length - 3}`
@@ -311,6 +357,7 @@ settingsEdit.addEventListener('click',  () => {
     }})
 
   } else {
+
     if(!settingsEdit_control.lastElementChild.checked){
     map.remove(map.length - 1)
   }
@@ -344,6 +391,12 @@ settingsResetColor.addEventListener('click', () => {
   })
 })
 
+settingsTime_control.addEventListener('click', () => {
+  timecontrol.style.display = toggle(timecontrol.style.display, "flex", '')
+  settingsTime_control.innerText = toggle(settingsTime_control.innerText, 'Close Advanced Time Controls', 'Advanced Time Controls')
+  settingsEditTime_control.style.display = 'block'
+})
+
 settingsEdit_control.lastElementChild.addEventListener('click', () => {
   if(settingsEdit_control.lastElementChild.checked){
     settingsEdit_control.style.display = 'none'
@@ -375,8 +428,8 @@ start.addEventListener('click', async () => {
 
  async function StartMusic(movements, durations, timelapses){
   
-durations = durations !== undefined ? durations : '3,'.repeat(movements.length).split(',') ;
-timelapses = timelapses !== undefined ? timelapses :'2000,'.repeat(movements.length).split(',');
+durations = durations !== undefined ? Array.isArray(durations) ? durations :  `${durations},`.repeat(movements.length).split(',') : '3,'.repeat(movements.length).split(',') ;
+timelapses = timelapses !== undefined ? Array.isArray(timelapses) ? timelapses : `${timelapses}`.repeat(movements.length).split(',') :'2000,'.repeat(movements.length).split(',');
 timelapses = Array(timelapses).flat(2).map((x) => Number(x))
   
 squares.map((x) => x.piece = '')
@@ -387,19 +440,39 @@ if(switchGuides.value == 3){
 
 console.log(data)
   for (let idx = 1; idx < Object.keys(data).length; idx++){
+
     const turn = data[idx]
+
         for (let i = 0; i < Object.keys(data[idx]).length; i++) {
+
             const square = movements[idx - 1][i];
             console.log(turn, square)
-            await sleep(timelapses[i])
-            
-            Array(movements[idx - 1][i]).flat(2).map((x) => x.click())
-            
-            if(switchGuides.value == 3){
-              square.piece = Chess_Unicode[Object.values(turn)[i].player][Object.values(turn)[i].piece]
-              square.textbox.innerText = square.piece
 
-              square.style.color = Object.values(turn)[i].player
+            if(Array.isArray(square)){
+
+              await sleep(timelapses[i])
+              square[0].click()
+               await sleep(timelapses[i] / 3 )
+              square[1].click()
+
+            }
+            else{
+
+              await sleep(timelapses[i])
+              square.click()
+
+            }
+            
+             
+            if(switchGuides.value == 3){
+              Array(square).flat(2).map((x) => {
+              let piece = Chess_Unicode[Object.values(turn)[i].piece][Object.values(turn)[i].player][0]
+              x.piece = piece[0]
+              x.piececolor = piece[1]
+
+              x.textbox.innerText = x.piece
+              x.textbox.style.color = x.piececolor
+              })
             }
         }
     }
@@ -443,3 +516,43 @@ async function startCapture() {
     console.error(err);
   }
 }
+
+[timecontrol_durbtn, timecontrol_timbtn].map((x) => {
+  console.log(x)
+  x[1].addEventListener('click', () => {
+      x[1].className = toggle(x[1].className, "carousel-control-next visible", "carousel-control-next invisible" );
+      x[0].className = "carousel-control-prev visible"
+      
+  })
+  x[0].addEventListener('click', () => {
+      x[0].className = toggle(x[0].className, "carousel-control-prev visible", "carousel-control-prev invisible" );
+      x[1].className = "carousel-control-next visible"
+      
+  })
+  
+})
+
+  timecontrol1.addEventListener('input', function() {
+    timecontrol1_output.textContent = this.value;
+  });
+
+  timecontrol2.addEventListener('input', function() {
+    timecontrol1_output.textContent = this.value;
+  });
+
+  timecontrol3.addEventListener('input', function() {
+    timecontrol3_output.textContent = this.value;
+  });
+
+  timecontrol4.addEventListener('input', function() {
+    timecontrol3_output.textContent = this.value;
+  });
+
+  settingsEditTime_control.lastElementChild.addEventListener('click', () => {
+  if(settingsEditTime_control.lastElementChild.checked){
+    
+    settingsTime_control.click()
+    settingsEditTime_control.style.display = 'none';
+    settingsEditTime_control.lastElementChild.checked = false
+  }
+})
