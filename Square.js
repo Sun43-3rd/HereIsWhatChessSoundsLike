@@ -19,28 +19,17 @@ import * as Ear from './Sound.js'
   const defaultcolor = () => {return hexToRgb(document.getElementById('settings-color').value)}
   const defaultcolor2 = () => {return hexToRgb(document.getElementById('settings-color2').value)}
   const settingsEdit_control = document.getElementById("edit-soundGrid")
-
+  
 
   toggleGuides.value = 1;
-  switchGuides.value = 0;
+  switchGuides.value = 1;
   rotateBored.value = 0;
   settings.value = 0;
   bored.editmode = false 
 
-  const pgn_ids = (text) => {return text !== undefined ? pgnInput : FormatPGN(pgnView.innerText)}
+  const PGN = () => FormatPGN(pgnView.innerText)
   const squares = [] 
-  const sounds = () => {return Ear.mappings?.[map.selectedOptions[0].label].map((x) => Ear.notes?.[soundBank.selectedOptions[0].label]?.[soundlength.selectedOptions[0].label][x])}
-
-export const retrieve = (square_ar, timelapse_ar, tmlpse = '0.5', duration_ar, drt = '0.5') => {
-    const movements = square_ar !== undefined ? square_ar : pgn_ids().flat(2).map((x) => squares.find((y) => y.id === x)).filter((x) => x !== undefined)
-    const b = timelapse_ar.length < movements.length ? timelapse_ar.concat(`${tmlpse + ' '}`.repeat(movements.length - timelapse_ar.length).split(' ').map((x) => Number(x))).flat(2) : timelapse_ar
-    const c = duration_ar.length < movements.length ? duration_ar.concat(`${drt + ' '}`.repeat(movements.length - duration_ar.length).split(' ').map((x) => Number(x))).flat(2) : duration_ar
-
-
-   return [movements, b, c]
-  }
-
-
+  const soundmap = () => {return Ear.mappings?.[map.selectedOptions[0].label].map((x) => Ear.notes?.[soundBank.selectedOptions[0].label]?.[soundlength.selectedOptions[0].label][x])}
 
 function toggle(value, a, b){
   return value === a? b : a
@@ -48,7 +37,7 @@ function toggle(value, a, b){
 
 function hexToRgb(hex) {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result ? `rgb(${[parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)].join(',')})`: null;
+  return result ? `rgb(${[parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)].join(',')})`: '';
 }
 
 function ColorIncrement(color, endColor){
@@ -60,103 +49,201 @@ function ColorIncrement(color, endColor){
    return `rgb(${array_1.map((x, i) =>  Number(x) + (Number(difference[i]) / 3 )).join(',')})`
   }
 
-function squareClick(square, duration){
-
-   if (toggleGuides.value = 0){
-
-    square.text = [square.soundname(), square.id][switchGuides.value]
-  
-  }
-  
-
-      square.style.backgroundColor = (square.style.backgroundColor === 'black' || square.style.backgroundColor === '') ? defaultcolor() : ColorIncrement(square.style.backgroundColor, defaultcolor2())
-      const a = square.sound()
-console.log(square.soundname(), a)
-      playSound(a, (duration === undefined ? 1 : 1))
-     
-}
-
 async function playSound(sound, duration){
- await sound.play()
-      
-      setTimeout( async () => {
-          
-       await sound.pause();
-          
-        sound.fastSeek(0); 
-      }, duration * 1000);
+  sound.load()
+
+  sound.addEventListener('loadedmetadata', async () => {
+    duration = duration === undefined ? sound.duration : duration ;
+      return new Promise(resolve => {
+    
+        sound.pause();
+        sound.currentTime = 0;
+
+        const end = () => {
+          sound.removeEventListener('ended', end);
+          resolve();
+        };
+
+        sound.addEventListener('ended', end)
+
+        sound.play()
+        
+        setTimeout(() => {
+            
+          sound.pause();
+          sound.currentTime = 0;
+        }, 
+        duration * 1000);
+
+      })
+    }
+  )
 }
 
 function FormatPGN(text){
-  return text.substring(text.indexOf('1.')).split(/\d+\.\s*/).filter(Boolean).map(x => x.trim().split(' ').map((y, i) => 
-    y.toUpperCase().includes('O')? 
-    (y === 'O-O' ? (i === 0 ? ['G1', 'F1']: ['G8', 'F8']) : 
-    (i === 0 ? ['C8', 'D8']: ['C1', 'D1'])) :  Ear.squares_id.find((z) => y.toUpperCase().includes(z))))
+const a = text.substring(text.indexOf('1.')).split(/\d+\.\s*/)
+const b = a.filter(Boolean).map(x => x.trim().split(' '))
+const c = b.map((x, i) => x.map((y) => 
+    y.toUpperCase().includes('O') ? 
+    (y === 'O-O' ? (i === 0 ? ['G1', 'F1']: ['G8', 'F8']) : (i === 0 ? ['C8', 'D8']: ['C1', 'D1'])) :  
+    Ear.squares_id.find((z) => y.toUpperCase().includes(z)))
+)
+
+let d = {};
+
+  for(let i = 1; i < a.length ; i++){
+
+    const line_array = b[i - 1]
+
+    Object.defineProperty(d, i.toString(), {
+      value: {
+                  [line_array[0]] : {
+                    
+                    player: 'White',
+                    piece : PieceNotation(line_array[0]),
+                    square : Array.isArray(c[i - 1][0]) ? c[i - 1][0].map((x) => squares.find((y) => y.id === x)) : squares.find((y) => y.id === c[i - 1][0]), 
+                    
+                  },
+                  [line_array[1]] : {
+
+                    player: 'Black',
+                    piece : PieceNotation(line_array[1]),
+                    square : Array.isArray(c[i - 1][1]) ? c[i - 1][1].map((x) => squares.find((y) => y.id === x)) : squares.find((y) => y.id === c[i - 1][1]), 
+
+                  },  
+            },
+
+      enumerable : true,
+      configurable : true,
+      writable : true,
+
+    })
     
+  }
+
+return d
+
 }
 
-async function sleep(seconds) {
-    return new Promise(resolve => setTimeout(resolve, seconds * 1000));
+function PieceNotation(move){
+  const output = ['Pawn', 'Knight', 'Bishop', 'Rook', 'Queen', 'King', ['King', 'Rook'], ['King', 'Rook']]
+  const search = ['', 'N', 'B', 'R', 'Q', 'K', 'O-O', 'O-O-O']
+   return output.reverse()[search.reverse().findIndex((x) => move.includes(x))]
 }
 
-async function StartMusic(square_ar, timelapse_ar, tmlpse = '0.5', duration_ar, drt = '0.5'){
-    let a = retrieve(square_ar, timelapse_ar, tmlpse, duration_ar, drt)
-    let movements = a[0] 
-    let timelapses = a[1]
-    let durations = a[2]
+const Chess_Unicode = { 
+                  'White' : {  
+                      'Pawn' : String.fromCodePoint('9817'),
+                      'Knight' : String.fromCodePoint('9816'),
+                      'Bishop' : String.fromCodePoint('9815'),
+                      'Rook' : String.fromCodePoint('9814'),
+                      'Queen' : String.fromCodePoint('9813'),
+                      'King' : String.fromCodePoint('9812')
+                  },
+                  'Black' : {  
+                      'Pawn' : String.fromCodePoint('9823'),
+                      'Knight' : String.fromCodePoint('9822'),
+                      'Bishop' : String.fromCodePoint('9821'),
+                      'Rook' : String.fromCodePoint('9820'),
+                      'Queen' : String.fromCodePoint('9819'),
+                      'King' : String.fromCodePoint('9818')
+                  }
+                
+                }
+ 
+Chess_Unicode.initial = [
+  Chess_Unicode.Black.Rook,   Chess_Unicode.Black.Knight, Chess_Unicode.Black.Bishop,
+  Chess_Unicode.Black.Queen,  Chess_Unicode.Black.King,  Chess_Unicode.Black.Bishop,
+  Chess_Unicode.Black.Knight, Chess_Unicode.Black.Rook,
+  Chess_Unicode.Black.Pawn, Chess_Unicode.Black.Pawn, Chess_Unicode.Black.Pawn,
+  Chess_Unicode.Black.Pawn, Chess_Unicode.Black.Pawn, Chess_Unicode.Black.Pawn,
+  Chess_Unicode.Black.Pawn, Chess_Unicode.Black.Pawn,
+  '', '', '', '', '', '', '', '',
+  '', '', '', '', '', '', '', '',
+  '', '', '', '', '', '', '', '',
+  '', '', '', '', '', '', '', '',
+  Chess_Unicode.White.Pawn, Chess_Unicode.White.Pawn, Chess_Unicode.White.Pawn,
+  Chess_Unicode.White.Pawn, Chess_Unicode.White.Pawn, Chess_Unicode.White.Pawn,
+  Chess_Unicode.White.Pawn, Chess_Unicode.White.Pawn,
+  Chess_Unicode.White.Rook,   Chess_Unicode.White.Knight, Chess_Unicode.White.Bishop,
+  Chess_Unicode.White.Queen,  Chess_Unicode.White.King,  Chess_Unicode.White.Bishop,
+  Chess_Unicode.White.Knight, Chess_Unicode.White.Rook
+];
 
-    for (let i = 0; i < movements.length; i++) {
-        squareClick(movements[i], durations[i]);
-        let wait = durations[i] + (timelapses[i] ?? 0); 
 
-        await sleep(wait)
-        console.log(i)
-    }
+
+async function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+async function StartMusic(movements, durations, timelapses){
+  
+
+}
+
+  
+
  
 for (let i = 0; i < 64; i++) {
     const square = document.createElement('div');
     const text = document.createElement('span');
-    square.text = text
+    square.textbox = text
     square.className = 'square';
     square.id = Ear.squares_id[i]
-    square.text.innerText = square.id
-    square.soundname = () => `${sounds()[i].replace(`PianoSBC/${soundBank.selectedOptions[0].label}${(soundlength.selectedOptions[0].label === 'Medium' ? '' : '_')}${(soundlength.selectedOptions[0].label === 'Medium' ? '' : soundlength.selectedOptions[0].label)} - `, '').replace('.wav', '').replace('sharp', '#')}`;
-    square.sound = () => new Audio(sounds()[i]);
-    square.soundfile = () => sounds()[i]; 
+    square.textbox.innerText = square.id
+    square.piece = Chess_Unicode.initial[i]; 
+    square.soundname = () => `${soundmap()[i].replace(`PianoSBC/${soundBank.selectedOptions[0].label}${(soundlength.selectedOptions[0].label === 'Medium' ? '' : '_')}${(soundlength.selectedOptions[0].label === 'Medium' ? '' : soundlength.selectedOptions[0].label)} - `, '').replace('.wav', '').replace('sharp', '#')}`;
+    square.getSound = () => {square.sound = new Audio(soundmap()[i])};
 
-    square.addEventListener('click', () => {
-      squareClick(square)
-    });
+    square.getSound()
+
+    square.sound.preload = 'metadata';
+
+    square.soundfile = () => soundmap()[i]; 
+    
+    square.addEventListener('click', async () => {
+      
+      square.style.backgroundColor = (square.style.backgroundColor === 'black' || square.style.backgroundColor === '') ? defaultcolor() : ColorIncrement(square.style.backgroundColor, defaultcolor2())
+      
+      playSound(square.sound)
+
+    })
     
     bored.appendChild(square);
     square.appendChild(text)
     squares.push(square)
   }
 
-switchGuides.addEventListener('click', () => {
-  switchGuides.value = switchGuides.value === 0 ? 1 : switchGuides.value === 1 ? 0 : 2;
+Array.prototype.filter.call(switchGuides.children, (x) => x.id !== '').map((x) => 
+  x.addEventListener('click', () => {
+  
+  switchGuides.value = x.id.slice(x.id.length -1)
+  switchGuide()
+}))
 
-  switchGuides.className = (['switch off', 'switch on', switchGuides.className][switchGuides.value])
-  squares.map((x) => {x.text.innerText = [x.id, x.soundname(), x.text.innerText][switchGuides.value]
-    })
-  }
-)
+function switchGuide(){
+    if(toggleGuides.value === 1){
+      squares.map((x) => {
+        if(switchGuides.value == 3){x.textbox.style.fontSize = '32px'} else{x.textbox.style.fontSize = '16px'}
+        
+        x.textbox.innerText = ['', x.id, x.soundname(), x.piece][switchGuides.value]
+        }
+      )
+    }
+}
 
 map.addEventListener('change', () => {
-    sounds()
-    squares.map((x) => {x.sound(); x.soundname()})
-    squares.map((x) => {x.text.innerText = [x.id, x.soundname(), x.text.innerText][switchGuides.value]
-    })
+    soundmap()
+    squares.map((x) => {x.getSound(), x.soundname()})
+    switchGuide()
   }
 )
 
 toggleGuides.addEventListener('click', () => {
   toggleGuides.value = toggleGuides.value === 0 ? 1 : 0;
-  switchGuides.value = ([2, 0][toggleGuides.value])
-  toggleGuides.className = (['switch off', 'switch on'][toggleGuides.value])
-  squares.map((x) => {x.text.innerText = ['', [x.soundname(), x.id][switchGuides.value]][toggleGuides.value]})
- 
+  toggleGuides.className = (['switch off', 'switch on'][toggleGuides.value]);
+  [squares.map((x) => {x.textbox.innerText = ''}), switchGuide()][toggleGuides.value]
+      
   }
 )
 
@@ -164,17 +251,18 @@ rotateBored.addEventListener('click', () => {
   rotateBored.value = rotateBored.value === 0 ? 1 : 0;
   
    bored.style.transform = (['rotate(0deg)', 'rotate(180deg)'][rotateBored.value])
-   squares.map((x) => {x.text.style.transform = (['rotate(0deg)', 'rotate(-180deg)'][rotateBored.value])})
+   squares.map((x) => {x.textbox.style.transform = (['rotate(0deg)', 'rotate(-180deg)'][rotateBored.value])})
   }
   
 )
       
-pgnInput.addEventListener('change', function(event) {
+pgnInput.addEventListener('change', async function(event) {
       const file = event.target.files[0];
       const reader = new FileReader();
       reader.onload = function(e) {
       const pgnText = e.target.result;
       pgnView.innerText = pgnText
+        PGN()
       };
 
   reader.readAsText(file);
@@ -195,7 +283,7 @@ settingsEdit.addEventListener('click',  () => {
       switchGuides.click()
       settingsEdit_control.style.display = 'block';
       squares.map((x) => {
-        x.sound().pause()
+        x.sound.pause()
         x.style.backgroundColor =  defaultcolor();
         x.setAttribute('contenteditable', 'true')
         
@@ -248,6 +336,7 @@ settingsGIF.addEventListener('click', () => {
   navigator.clipboard.writeText(pgnView.innerText);
   alert("Copied Current PGN " + pgnView.innerText);
 })
+
 settingsResetColor.addEventListener('click', () => {
   squares.map((x) => 
     { 
@@ -260,7 +349,7 @@ settingsEdit_control.lastElementChild.addEventListener('click', () => {
     settingsEdit_control.style.display = 'none'
     
     settingsEdit.click()
-
+    map.lastElementChild.selected = true
   }
 }
 )
@@ -281,9 +370,42 @@ window.onclick = function(event) {
 } 
 
 start.addEventListener('click', async () => {
-  
-  StartMusic(undefined, [] , '0.5', [], '1.4')
+  const data = PGN()
+  const movements = Object.values(data).map((x) => Object.values(x).map((y) => y.square)).filter((x) => x !== undefined)
 
+ async function StartMusic(movements, durations, timelapses){
+  
+durations = durations !== undefined ? durations : '3,'.repeat(movements.length).split(',') ;
+timelapses = timelapses !== undefined ? timelapses :'2000,'.repeat(movements.length).split(',');
+timelapses = Array(timelapses).flat(2).map((x) => Number(x))
+  
+squares.map((x) => x.piece = '')
+if(switchGuides.value == 3){
+    
+    switchGuide()
+}
+
+console.log(data)
+  for (let idx = 1; idx < Object.keys(data).length; idx++){
+    const turn = data[idx]
+        for (let i = 0; i < Object.keys(data[idx]).length; i++) {
+            const square = movements[idx - 1][i];
+            console.log(turn, square)
+            await sleep(timelapses[i])
+            
+            Array(movements[idx - 1][i]).flat(2).map((x) => x.click())
+            
+            if(switchGuides.value == 3){
+              square.piece = Chess_Unicode[Object.values(turn)[i].player][Object.values(turn)[i].piece]
+              square.textbox.innerText = square.piece
+
+              square.style.color = Object.values(turn)[i].player
+            }
+        }
+    }
+} 
+
+  await StartMusic(movements)
 }
 )
 

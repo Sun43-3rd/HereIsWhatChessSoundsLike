@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=0.25" />
 <title>soundbored</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,7 +17,7 @@ html, body{
 
   body{
     background: rgb(25, 25, 25);
-    color: #eee3dd;
+    color: white;
     font-family: "Roboto Mono";
     width: 100%;
     display: block;
@@ -57,11 +57,12 @@ html, body{
   display: flex;
   width: 100%;
   flex-direction: row;
-  column-gap: 25px;
+  column-gap: 20px;
   height: 30px;
   justify-content: space-between;
-  max-width: 435px;
+  max-width: 450px;
   min-width: 100px;
+  align-items: center;
 }
 
 .bored{
@@ -91,10 +92,10 @@ html, body{
     height: 50px;
     min-height: 50%;
     background-color: black;
-    border: 1px solid #eee3dd ;
+    border: 1px solid white ;
     cursor: pointer;
-    color: #eee3dd;
-    font-size: medium;
+    color: white;
+    font-size: 16px;
     display: flex;
     flex-direction: row;
     justify-content:center;
@@ -120,16 +121,6 @@ html, body{
 #gameURL{
   min-width: 165px;
 }
-
-.objectA{
-  width: 200px;
-  display: flex;
-  align-items: center;
-  column-gap: 10px;
-  max-height: 30px;
-}
-
-
 
 .switch {
     display: inline-block;
@@ -173,10 +164,12 @@ html, body{
  }
 
  .knob{
-  box-sizing: border-box;
-  height: 40px;
+  width: 32px;
   border-radius: 50%;
-  font-size: x-large;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
  }
 
  .container{
@@ -208,12 +201,13 @@ html, body{
 
 
  .pgnBox{
-  font-size: small;
+  font-size: 16px;
   border: 1px solid white;
   width: 100%;
   position: relative;
   top: -15px;
   min-height: 10px;
+  padding: 5px 5px 5px 5px;
  }
 
  .settings{
@@ -235,14 +229,14 @@ html, body{
   padding: 10px 12px;
   display: flex;
   flex-direction: column;
-  font-size: 14px;
+  font-size: 16px;
 }
 #settings-colors div {
   color: rgb(255, 255, 255);
   display: flex;
   flex-direction: column;
   row-gap: 2px;
-  font-size: 14px
+  font-size: 16px
 
 }
 
@@ -267,14 +261,15 @@ accent-color: red;
 .edit-soundGridclass{
   display: none;
   width: 175px;
-  align-self: flex-end;
-  position: relative;
 }
 
 select{
   background-color: #000000;
   color: white;
   border: 0px;
+  padding-left: 5px;
+  padding-right: 5px;
+  height: 100%;
 }
 
 select div{
@@ -284,6 +279,17 @@ select div{
   position: relative;
 }
 
+#audioControl, #mapControl{
+  display: flex;
+justify-content: center;
+align-items: center;
+  column-gap: 10px;
+  height: 100%;
+  outline: 1px solid whi;
+}
+
+
+
 </style>
 </head>
 <body>
@@ -291,25 +297,28 @@ select div{
     <div class="main">
       <div class="bored"> 
         <div class="boredHeader">
-          <select id="map" type="dropdown">
-            <option>C Major</option>
-            <option selected>Direct</option>
-            <option>C Major (Middle)</option>
-            <option>Circle of Fifths</option>
-          </select>
-          <select id="soundBank" type="dropdown">
-            <option>
-              GrandPiano 
-            </option>
-            <option selected>GrandPiano2</option>
-          </select>
-          <select id="soundBank-duration" type="dropdown">
-            <option>Short</option>
-            <option selected>Medium</option>
-            <option>Long</option>
-          </select>
-          <div class="objectA">
+          <div id="mapControl">
+            <select id="map" type="dropdown">
+              <option>C Major</option>
+              <option selected>Direct</option>
+              <option>C Major (Middle)</option>
+              <option>Circle of Fifths</option>
+            </select>
           </div>
+          <div id="audioControl">
+            <select id="soundBank" type="dropdown">
+              <option>
+                GrandPiano 
+              </option>
+              <option selected>GrandPiano2</option>
+            </select>
+            <select id="soundBank-duration" type="dropdown">
+              <option>Short</option>
+              <option selected>Medium</option>
+              <option>Long</option>
+            </select>
+          </div>
+          
           <div class="settings">
            <i id="btn-settings" class="fa fa-gear fa-spin"></i>
               <div id="settings-dropdown" class="settings-content">
@@ -352,8 +361,14 @@ select div{
             <div class="switch on" id="toggleGuides"></div>
           </div>
           <div class="wrapperHorizontal">
-            <span>Switch Guides</span>
-            <div class="switch" id="switchGuides"></div> 
+            <span>Swap Guides</span>
+            <div id="switchGuides"> 
+              <span id="switchGudies-1">[A1]</span>
+              <span> | </span>
+              <span id="switchGudies-2">&#x1D120</span>
+              <span> | </span>
+              <span id="switchGudies-3">&#9817 </span>
+            </div> 
           </div>
           <div class="knob" id="rotateBored">🗘</div>
         </div>
@@ -361,7 +376,7 @@ select div{
       
     </div>
     <div id="pgn-container">
-      <span> PGN</span>
+      <span> PGN | Music </span>
       <span id="pgnView"  class="pgnBox" contenteditable="true"></span>
       <div id="btn-container">
         <input type="file" id="pgnFileInput" />
