@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=0.25" />
+<meta name="viewport" content="width=device-width, initial-scale=0.75" />
 <title>soundbored</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,16 +15,41 @@ html, body{
   height: 100%;
   margin: 0 auto;
 }
+:root{
+  --accent-color :  rgb(128, 0, 255);
+  --bs-btn-active-bg :rgb(128, 0, 255);
+  --bs-btn-active-color: rgb(128, 0, 255);
+  --bs-btn-color: rgb(128, 0, 255);
+  --bs-btn-bg: rgb(128, 0, 255);
+  --bs-btn-border-color:rgb(128, 0, 255) ;
+  --bs-btn-hover-color: white;
+  --bs-btn-hover-bg: rgb(128, 0, 255);
+  --dark:rgb(17, 17, 17);
+}
+
+
+.btn-outline-pri{
+  color: var(--accent-color);
+  background-color: var(--dark);
+  border-color: white;
+}
+
+.btn-check + .btn:hover{
+ border-color: white;
+}
 
   body{
-    background: rgb(25, 25, 25);
+    background: var(--dark);
     color: white;
     font-family: "Roboto Mono";
     width: 100%;
     display: block;
   }
 
-  #all{
+  span {
+    width: fit-content;
+  }
+  #all {
     width: 90%;
     height: 90%;
     display: flex;
@@ -51,8 +76,6 @@ html, body{
     width: 100%;
  }
   
-
-
 .bored{
 
   display: flex;
@@ -69,7 +92,8 @@ html, body{
   flex-direction: row;
   column-gap: 20px;
   height: 30px;
-  min-width: 100px;
+  min-width: 440px;
+  max-width: 440px;
   align-items: center;
 }
 
@@ -124,7 +148,7 @@ html, body{
     row-gap: 25px;
     width : 100%;
     max-width: 435px;
-    min-width: 100px;
+    min-width: 400px;
     margin-top: 15px;
  }
   
@@ -138,11 +162,19 @@ html, body{
   padding: 5px 5px 5px 5px;
  }
 
+ #boredController{
+  min-width: 435px;
+  width: 435px;
+  height: 70px;
+  align-items: flex-start;
+}
 
 .switch {
     display: inline-block;
     width: 60px;
     height: 34px;
+    min-height: 34px;
+    min-width: 60px;
     position: relative;
     background-color: rgb(214, 214, 214);
     border-radius: 34px;
@@ -158,6 +190,8 @@ html, body{
     left: 4px;
     height: 26px;
     width: 26px;
+    min-width: 26px;
+    min-height: 26px;
     background-color: rgb(159, 159, 159);
     border-radius: 50%;
     transition: transform 0.2s;
@@ -165,7 +199,7 @@ html, body{
 
 
   .switch.on {
-    background-color: rgb(128, 0, 255);
+    background-color: var(--accent-color);
   }
 
 
@@ -176,8 +210,14 @@ html, body{
  .wrapperHorizontal{
   display: flex;
   column-gap: 10px;
-  align-items: center;
   
+ }
+
+ .wrapperVertical{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  row-gap: 5px;
  }
 
  .knob{
@@ -206,8 +246,13 @@ html, body{
   height: 25px;
  }
 
- .settings{
+#switchGuides label{
+  color: white;
+  font-size: 24px;
+}
 
+
+ .settings{
   font-size: 24px;
   justify-self: flex-end;
  }
@@ -248,7 +293,7 @@ accent-color: red;
 }
 
 .settings-content div:hover {
-  background-color: rgb(128, 0, 255);
+  background-color: var(--accent-color);
 }
 
 .show {
@@ -312,7 +357,6 @@ select div{
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  border: 1px solid white;
 }
 
 #timeControlContent1, #timeControlContent2  {
@@ -326,6 +370,7 @@ select div{
 .invisible {
   visibility: hidden !important;
 }
+
 
 </style>
 </head>
@@ -395,13 +440,13 @@ select div{
             <div>
               <label for="timeControl-duration" class="form-label">Duration</label> <output for="timeControl-duration1" id="timeControl_duration-output" aria-hidden="true"></output> <span>ms</span>
             </div>
-            <div id="timeControl-durationHolder" class="carousel slide">
+            <div id="timeControl-durationHolder" class="carousel slide carousel-fade">
               <button class="carousel-control-prev invisible" type="button" data-bs-target="#timeControl-durationHolder" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
               </button>
               <div id="timeControl-durations" class="carousel-inner">
-                <input type="range" class="form-range carousel-item active" min="100" max="100000" value="500" id="timeControl-duration1">
-                <input class="carousel-item" id="timeControl-duration2">
+                <input type="range" class="form-range carousel-item active" min="500" max="100000" step="500" value="1500" id="timeControl-duration1">
+                <input class="carousel-item" id="timeControl-duration2" placeholder="[100,]">
               </div>
                <button class="carousel-control-next visible" type="button" data-bs-target="#timeControl-durationHolder" data-bs-slide="next">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
@@ -417,7 +462,7 @@ select div{
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
               </button>
               <div id="timeControl-timelapses" class="carousel-inner">
-                <input type="range" class="form-range carousel-item active" min="100" max="100000" value="500" id="timeControl-timelapse1">
+                <input type="range" class="form-range carousel-item active" min="500" max="100000" step="500" value="1500" id="timeControl-timelapse1">
                 <input class="carousel-item" id="timeControl-timelapse2">
               </div>
               <button class="carousel-control-next visible" type="button" data-bs-target="#timeControl-timelapseHolder" data-bs-slide="next">
@@ -434,19 +479,21 @@ select div{
         <div class="container">
           <div class="grid" id="soundGrid"></div>
         </div>
-        <div class="wrapperHorizontal">
-          <div class="wrapperHorizontal">
-            <span>On/Off Guides</span>
+        <div id="boredController" class="wrapperHorizontal">
+          <div class="wrapperVertical">
+            
             <div class="switch on" id="toggleGuides"></div>
           </div>
-          <div class="wrapperHorizontal">
-            <span>Swap Guides</span>
-            <div id="switchGuides"> 
-              <span id="switchGudies-1">[A1]</span>
-              <span> | </span>
-              <span id="switchGudies-2">&#x1D120</span>
-              <span> | </span>
-              <span id="switchGudies-3">&#9817 </span>
+          <div class="wrapperVertical">
+            <div id="switchGuides" class="btn-group" role="group"> 
+              <input id="switchGuides-1" type="radio" class="btn-check" name="btnradio" autocomplete="off" checked></input>
+              <label class="btn btn-outline-pri" for="switchGuides-1">[E4]</label>
+             
+              <input id="switchGuides-2" type="radio" class="btn-check" name="btnradio" autocomplete="off"></input>
+              <label class="btn btn-outline-pri" for="switchGuides-2">&#x1D120</label>
+      
+              <input id="switchGuides-3" type="radio" class="btn-check" name="btnradio" name="switchGuides" autocomplete="off"></input>
+              <label class="btn btn-outline-pri" for="switchGuides-3">&#9817</label>
             </div> 
           </div>
           <div class="knob" id="rotateBored">🗘</div>
@@ -463,9 +510,9 @@ select div{
       </div>
     </div>
   </div>
+
 <script src="Square.js" type="module"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-  
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>  
 <script src="download.js" type="module"></script>
 </body>
 </html>

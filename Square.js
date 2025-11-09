@@ -49,7 +49,7 @@ import * as Ear from './Sound.js'
   timecontrol1_output.textContent = timecontrol1.value;
   timecontrol3_output.textContent = timecontrol1.value;
 
-  const PGN = () => FormatPGN(pgnView.innerText)
+  const PGN = () => FormatPGN(pgnView.innerText.toString())
   const squares = [] 
   const soundmap = () => {return Ear.mappings?.[map.selectedOptions[0].label].map((x) => Ear.notes?.[soundBank.selectedOptions[0].label]?.[soundlength.selectedOptions[0].label][x])}
 
@@ -242,9 +242,9 @@ for (let i = 0; i < 64; i++) {
     square.piece = Array(Chess_Unicode.initial[i]).flat(2)[0]; 
     square.piececolor = Chess_Unicode.initial[i][1];
     square.soundname = () => `${soundmap()[i].replace(`PianoSBC/${soundBank.selectedOptions[0].label}${(soundlength.selectedOptions[0].label === 'Medium' ? '' : '_')}${(soundlength.selectedOptions[0].label === 'Medium' ? '' : soundlength.selectedOptions[0].label)} - `, '').replace('.wav', '').replace('sharp', '#')}`;
-    square.getSound = () => {square.sound = new Audio(soundmap()[i])};
+    square.updateSound = () => {square.sound = new Audio(soundmap()[i])};
 
-    square.getSound()
+    square.updateSound()
 
     square.sound.preload = 'metadata';
 
@@ -254,7 +254,7 @@ for (let i = 0; i < 64; i++) {
       
       square.style.backgroundColor = ['black', 'rgb(109, 60, 31)', 'tan', ''].includes(square.style.backgroundColor ) ? defaultcolor() : ColorIncrement(square.style.backgroundColor, defaultcolor2())
       
-      playSound(square.sound)
+      playSound(square.sound, Number(timecontrol1_output.textContent) / 1000)
 
     })
     
@@ -263,30 +263,42 @@ for (let i = 0; i < 64; i++) {
     squares.push(square)
   }
 
-Array.prototype.filter.call(switchGuides.children, (x) => x.id !== '').map((x) => 
-  x.addEventListener('click', () => {
+map.addEventListener('change', () => {
+    soundmap()
+    squares.map((x) => {x.updateSound(), x.soundname()})
+    switchGuide()
+  }
+)
+
+soundBank.addEventListener('change', () => {
+    soundmap()
+    squares.map((x) => {x.updateSound(), x.soundname()})
+  }
+)
+
+Array.prototype.filter.call(switchGuides.children, (x) => x.tagName === 'LABEL').map((x) => 
   
-  switchGuides.value = x.id.slice(x.id.length -1)
+  x.addEventListener('click', (e) => {
+
+  switchGuides.value = x.htmlFor.slice(x.id.length -1)
   switchGuide()
 }))
 
 function switchGuide(){
     if(toggleGuides.value === 1){
       squares.map((x, i) => {
-        if(switchGuides.value == 3){x.textbox.style.fontSize = '40px'; x.textbox.style.color = x.piececolor; x.style.backgroundColor = toggle((toggle(x.id.at(1) % 2 == 0, true, false) ? i % 2 == 0 : Math.abs(i % 2 ) == 1) , true, false) ? 'rgb(109, 60, 31)' : 'tan'} else{x.textbox.style.fontSize = '16px'; x.textbox.style.color = 'white'}
-        
-        x.textbox.innerText = ['', x.id, x.soundname(), x.piece][switchGuides.value]
+        if(switchGuides.value == 3){chessmode()}
+        else{
+          x.textbox.innerText = ['', x.id, x.soundname()][switchGuides.value]
+        }
         }
       )
     }
 }
 
-map.addEventListener('change', () => {
-    soundmap()
-    squares.map((x) => {x.getSound(), x.soundname()})
-    switchGuide()
-  }
-)
+function chessmode(){
+
+}
 
 toggleGuides.addEventListener('click', () => {
   toggleGuides.value = toggleGuides.value === 0 ? 1 : 0;
@@ -426,7 +438,11 @@ start.addEventListener('click', async () => {
   const data = PGN()
   const movements = Object.values(data).map((x) => Object.values(x).map((y) => y.square)).filter((x) => x !== undefined)
 
- async function StartMusic(movements, durations, timelapses){
+  await StartMusic(movements)
+}
+)
+
+async function StartMusic(movements, durations, timelapses){
   
 durations = durations !== undefined ? Array.isArray(durations) ? durations :  `${durations},`.repeat(movements.length).split(',') : '3,'.repeat(movements.length).split(',') ;
 timelapses = timelapses !== undefined ? Array.isArray(timelapses) ? timelapses : `${timelapses}`.repeat(movements.length).split(',') :'2000,'.repeat(movements.length).split(',');
@@ -478,9 +494,6 @@ console.log(data)
     }
 } 
 
-  await StartMusic(movements)
-}
-)
 
 async function startCapture() {
 
