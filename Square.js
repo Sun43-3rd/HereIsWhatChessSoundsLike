@@ -1,65 +1,108 @@
 import * as Ear from './Sound.js'
-
-  const bored = document.getElementById('soundGrid');
+import {Notes} from './Notes.js'
+  // Main HTML Elements
+  const board = document.getElementById('board');
   const pgnView = document.getElementById('pgnView')
   export const pgnInput = document.getElementById('pgnFileInput')
-  const toggleGuides = document.getElementById('toggleGuides')
-  const switchGuides = document.getElementById('switchGuides')
-  const rotateBored = document.getElementById('rotateBored')
+
+
+  // Sound Control Buttons
   const map = document.getElementById('map')
+  const mapTransposition = document.getElementById('map-Transposition')
   const soundBank = document.getElementById('soundBank')
-  const soundlength = document.getElementById('soundBank-duration')
-  const start = document.getElementById('startButton')
+  const soundBank_Length = document.getElementById('soundBank-Duration')
+  const soundBank_Velocity = document.getElementById('soundBank-Velocity')
+
+  // Board Control Buttons
+  const toggleGuides = document.getElementById('toggleGuides')
+  const selectGuides = document.getElementById('selectGuides')
+  const rotateboard = document.getElementById('rotateboard')
   
-  const settings = document.getElementById('btn-settings')
+  // Music Buttons
+  const start = document.getElementById('startButton')
+
+  // Settings
+  const settings = document.getElementById('settings-btn')
   const settingsEdit = document.getElementById('settings-edit')
   const settingsGIF = document.getElementById('settings-gif')
-  const settingsTime_control = document.getElementById('settings-timeControl')
+  const settingsTimeControl = document.getElementById('settings-timeControl')
   const settingsResetColor = document.getElementById('settings-resetColor')
-  const settingsEdit_control = document.getElementById("edit-soundGrid")
-  const settingsEditTime_control = document.getElementById("edit-timeControl")
+  const settingsEditColors = Array.prototype.filter.call(document.getElementById("editColors").children, (x) => x.tagName === 'LABEL')
+  
+  // Save Changes Checkboxes
+  const saveBoard = document.getElementById("save-board")
+  const saveTimeControl = document.getElementById("save-timeControl")
 
-
+  // Time Control
   const timecontrol = document.getElementById('timeControl')
   const timecontrol1 = document.getElementById('timeControl-duration1')
   const timecontrol2 = document.getElementById('timeControl-duration2')
   const timecontrol3 = document.getElementById('timeControl-timelapse1')
   const timecontrol4 = document.getElementById('timeControl-timelapse2')
   
-  const timecontrol1_output = document.getElementById('timeControl_duration-output')
-  const timecontrol3_output = document.getElementById('timeControl_timelapse-output')
+  const tcDuration_output_ms = document.getElementById('timeControl-duration-output-ms')
+  const tcDuration_output_sec = document.getElementById('timeControl-duration-output-sec')
+  const tcTL_output_ms = document.getElementById('timeControl-timelapse-output-ms')
+  const tcTL_output_sec = document.getElementById('timeControl-timelapse-output-sec')
+
+  const durationCarousel_btn = Array.prototype.filter.call(document.getElementById("timeControl-durationHolder").children, (x) => x.tagName === 'BUTTON')
+  const lapseCarousel_btn = Array.prototype.filter.call(document.getElementById("timeControl-timelapseHolder").children, (x) => x.tagName === 'BUTTON')
+
+// Colors
+
+  const selectColors_btn = Array.prototype.filter.call(document.getElementById("selectColors").children, (x) => x.tagName === 'LABEL')
+  const colorSlideIndicators = document.getElementById("Colors-Slide-indicators").children
+  const colorsAll = document.getElementById('colors-All')
+  const colorsWhite = document.getElementById('colors-White')
+  const colorsBlack = document.getElementById('colors-Black')
+
+  
+  colorsAll.inputs = ['Color-All-1','Color-All-2', 'Color-All-3'].map((x) => document.getElementById(x))
+  colorsWhite.inputs = ['Color-White-1','Color-White-2'].map((x) => document.getElementById(x))
+  colorsBlack.inputs = ['Color-Black-1','Color-Black-2'].map((x) => document.getElementById(x))
+
+  console.log(colorsAll.inputs, colorsBlack.inputs, colorsWhite.inputs)
+  // Color Input Values
+  const colorDefault = () => {return colorsAll.inputs.map((x) => hexToRgb(x.value))}
+  const colorWhite = () => {return colorsWhite.inputs.map((x) => hexToRgb(x.value))}
+  const colorBlack = () => {return colorsBlack.inputs.map((x) => hexToRgb(x.value))}
   
 
-  const timecontrol_durbtn = Array.prototype.filter.call(document.getElementById("timeControl-durationHolder").children, (x) => x.tagName === 'BUTTON')
-  const timecontrol_timbtn = Array.prototype.filter.call(document.getElementById("timeControl-timelapseHolder").children, (x) => x.tagName === 'BUTTON')
-
-
-  const defaultcolor3 = () => {return hexToRgb(document.getElementById('settings-color3').value)}
-  const defaultcolor = () => {return hexToRgb(document.getElementById('settings-color').value)}
-  const defaultcolor2 = () => {return hexToRgb(document.getElementById('settings-color2').value)}
-  
-  
+// Default Values
 
   toggleGuides.value = 1;
-  switchGuides.value = 1;
-  rotateBored.value = 0;
+  selectGuides.value = 1;
+  rotateboard.value = 0;
   settings.value = 0;
-  bored.editmode = false 
+  
+  tcDuration_output_ms.textContent = timecontrol1.value;
+  tcTL_output_ms.textContent = timecontrol1.value;
 
-  timecontrol1_output.textContent = timecontrol1.value;
-  timecontrol3_output.textContent = timecontrol1.value;
+  let currentDuration = tcDuration_output_ms.textContent ;
+  let currentTimeLapse = tcTL_output_ms.textContent ;
+
+  tcDuration_output_sec.textContent = Math.floor(Number(timecontrol1.value) / 1000);
+  tcTL_output_sec.textContent = Math.floor(Number(timecontrol1.value) / 1000);
+
+    // Board Modes
+    board.edit = false;
 
   const PGN = () => FormatPGN(pgnView.innerText.toString())
   const squares = [] 
-  const soundmap = () => {return Ear.mappings?.[map.selectedOptions[0].label].map((x) => Ear.notes?.[soundBank.selectedOptions[0].label]?.[soundlength.selectedOptions[0].label][x])}
+  const soundmap = () => {return Ear.Mappings?.[map.selectedOptions[0].label]?.[mapTransposition.value.toString()].map((x) => Notes?.[soundBank.selectedOptions[0].label]?.[soundBank_Length.selectedOptions[0].label][x])}
+  const Music = {movements : [], sounds : [], durations : [], timelapses: []}
+  const audioPool = new Set()
 
+// Tools
 function toggle(value, a, b){
   return value === a? b : a
 }
 
+toggle.property = function(property, value, a, b){value[property] = toggle(value[property], a , b)};
+
 function hexToRgb(hex) {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result ? `rgb(${[parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)].join(',')})`: '';
+  return result ? `rgb(${[parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)].join(', ')})`: '';
 }
 
 function ColorIncrement(color, endColor){
@@ -69,37 +112,6 @@ function ColorIncrement(color, endColor){
    const difference = array_1.map((x, i) => array_2[i] - x) 
   
    return `rgb(${array_1.map((x, i) =>  Number(x) + (Number(difference[i]) / 3 )).join(',')})`
-  }
-
-async function playSound(sound, duration){
-  sound.load()
-
-  sound.addEventListener('loadedmetadata', async () => {
-    duration = duration === undefined ? sound.duration : duration ;
-      return new Promise(resolve => {
-    
-        sound.pause();
-        sound.currentTime = 0;
-
-        const end = () => {
-          sound.removeEventListener('ended', end);
-          resolve();
-        };
-
-        sound.addEventListener('ended', end)
-
-        sound.play()
-        
-        setTimeout(() => {
-            
-          sound.pause();
-          sound.currentTime = 0;
-        }, 
-        duration * 1000);
-
-      })
-    }
-  )
 }
 
 function FormatPGN(text){
@@ -152,7 +164,6 @@ function PieceNotation(move){
   const search = ['', 'N', 'B', 'R', 'Q', 'K', 'O-O', 'O-O-O']
    return output.reverse()[search.reverse().findIndex((x) => move.includes(x))]
 }
-
 
 const Chess_Unicode = {
     Pawn: {
@@ -226,79 +237,132 @@ Chess_Unicode.initial = [
     Chess_Unicode.Rook.White
 ];
 
+    // Pause any other sounds that are currently playing and remember them
+async function playSound(sound, duration, timelapse = 0, pool = new Set()){
+
+  if (sound.readyState < 2) {
+        await new Promise(resolve => {
+            sound.addEventListener('canplaythrough', resolve, { once: true });
+            sound.load();
+            duration = duration === undefined ? sound.duration : duration ;
+        });
+    }
+      
+  const previouslyPlaying = [...pool.values()]
+  console.log(previouslyPlaying, previouslyPlaying.length,!previouslyPlaying.slice(-2)[0].paused)
+    if (timelapse > 0 && previouslyPlaying.length !== 0 && !previouslyPlaying.slice(-2)[0].paused) {
+          
+          console.log('waiting...')
+          await sleep(timelapse)
+    } 
+
+      pool.forEach(async other => {
+        if (!other.paused) {
+            other.pause();
+            previouslyPlaying.push(other);
+            
+            
+        }
+    });  
+
+    sound.currentTime = 0;
+    sound.play()
+
+    await Promise.race(
+      [
+        new Promise(res => sound.addEventListener('ended', res, { once: true })),
+        sleep(duration)
+      ]
+    );
+
+    sound.pause();
+    sound.currentTime = 0;
+
+    Music.push({'audio' : sound, 'duration' : duration, 'timelapse' : timelapse})
+       
+    }
+
 async function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
-
  
+// Squares
+
 for (let i = 0; i < 64; i++) {
+  // Design
     const square = document.createElement('div');
-    const text = document.createElement('span');
-    square.textbox = text
-    square.className = 'square';
+    const textbox = document.createElement('span');
+    square.textbox = textbox
+    square.className = 'square'; square.style.backgroundColor = colorDefault()[2];
     square.id = Ear.squares_id[i]
     square.textbox.innerText = square.id;
-
-    square.piece = Array(Chess_Unicode.initial[i]).flat(2)[0]; 
-    square.piececolor = Chess_Unicode.initial[i][1];
-    square.soundname = () => `${soundmap()[i].replace(`PianoSBC/${soundBank.selectedOptions[0].label}${(soundlength.selectedOptions[0].label === 'Medium' ? '' : '_')}${(soundlength.selectedOptions[0].label === 'Medium' ? '' : soundlength.selectedOptions[0].label)} - `, '').replace('.wav', '').replace('sharp', '#')}`;
-    square.updateSound = () => {square.sound = new Audio(soundmap()[i])};
-
-    square.updateSound()
-
-    square.sound.preload = 'metadata';
-
+    
+  //  Refernced Properties
+    
+    square.renderSound = () => {square.sound = new Audio(soundmap()[i])};
+    square.renderSound(); square.sound.preload = 'metadata';
+    // replace '#' with data from element controlling sharp or flat
+    square.renderSoundName = () => {square.sound.name = Ear.ORDER['#'][soundmap()[i]]};
+    
     square.soundfile = () => soundmap()[i]; 
     
+
+    square.editable = () => {
+      square.sound.pause()
+      square.sound.currentTime = 0
+      square.style.backgroundColor =  defaultcolor();
+      square.setAttribute('contenteditable', 'true')
+    }
+
     square.addEventListener('click', async () => {
       
-      square.style.backgroundColor = ['black', 'rgb(109, 60, 31)', 'tan', ''].includes(square.style.backgroundColor ) ? defaultcolor() : ColorIncrement(square.style.backgroundColor, defaultcolor2())
+      square.style.backgroundColor = [colorDefault()[2]].includes(square.style.backgroundColor ) ? colorDefault()[0] : ColorIncrement(square.style.backgroundColor, colorDefault()[1])
       
-      playSound(square.sound, Number(timecontrol1_output.textContent) / 1000)
-
+      audioPool.add(square.sound)
+          await playSound(square.sound, Number(tcDuration_output_ms.textContent), square.timelapse, audioPool)
+      
     })
     
-    bored.appendChild(square);
-    square.appendChild(text)
+    board.appendChild(square);
+    square.appendChild(textbox)
     squares.push(square)
   }
 
+
+// Handle Live Dropdown Changes 
 map.addEventListener('change', () => {
     soundmap()
-    squares.map((x) => {x.updateSound(), x.soundname()})
+    squares.map((x) => {x.renderSound(), x.soundname()})
     switchGuide()
   }
 )
 
-soundBank.addEventListener('change', () => {
-    soundmap()
-    squares.map((x) => {x.updateSound(), x.soundname()})
-  }
-)
-
-Array.prototype.filter.call(switchGuides.children, (x) => x.tagName === 'LABEL').map((x) => 
-  
-  x.addEventListener('click', (e) => {
-
-  switchGuides.value = x.htmlFor.slice(x.id.length -1)
-  switchGuide()
-}))
-
 function switchGuide(){
     if(toggleGuides.value === 1){
       squares.map((x, i) => {
-        if(switchGuides.value == 3){chessmode()}
-        else{
-          x.textbox.innerText = ['', x.id, x.soundname()][switchGuides.value]
-        }
+        if(selectGuides.value == 3){chessmode()}
+        else{x.textbox.innerText = ['', x.id, x.soundname()][selectGuides.value]}
         }
       )
     }
 }
 
 function chessmode(){
-
+  squares.map((square) => {
+      square.piece = Array(Chess_Unicode.initial[i]).flat(2)[0]; 
+      square.piececolor = Chess_Unicode.initial[i][1];
+    }
+  )
 }
+
+
+// Bored Controls
+
+soundBank.addEventListener('change', () => {
+    soundmap()
+    squares.map((x) => {x.renderSound(), x.soundname()})
+  }
+)
 
 toggleGuides.addEventListener('click', () => {
   toggleGuides.value = toggleGuides.value === 0 ? 1 : 0;
@@ -308,14 +372,27 @@ toggleGuides.addEventListener('click', () => {
   }
 )
 
-rotateBored.addEventListener('click', () => {
-  rotateBored.value = rotateBored.value === 0 ? 1 : 0;
+Array.prototype.filter.call(selectGuides.children, (x) => x.tagName === 'LABEL').map((x) => 
   
-   bored.style.transform = (['rotate(0deg)', 'rotate(180deg)'][rotateBored.value])
-   squares.map((x) => {x.textbox.style.transform = (['rotate(0deg)', 'rotate(-180deg)'][rotateBored.value])})
+  x.addEventListener('click', (e) => {
+
+  selectGuides.value = x.htmlFor.slice(x.id.length -1)
+  switchGuide()
+}))
+
+rotateboard.addEventListener('click', () => {
+  rotateboard.value = rotateboard.value === 0 ? 1 : 0;
+  
+   board.style.transform = (['rotate(0deg)', 'rotate(180deg)'][rotateboard.value])
+   squares.map((x) => {x.textbox.style.transform = (['rotate(0deg)', 'rotate(-180deg)'][rotateboard.value])})
   }
   
 )
+
+selectColors_btn.map((x, i) => x.addEventListener('click', () => {
+}))
+
+// PGN
       
 pgnInput.addEventListener('change', async function(event) {
       const file = event.target.files[0];
@@ -330,71 +407,28 @@ pgnInput.addEventListener('change', async function(event) {
   }
 )
 
+
+// Settings 
+
 settings.addEventListener('click',  () => { 
-  settings.className = toggle(settings.className, 'fa fa-gear fa-spin', 'fa fa-gear');
-  settings.parentElement.lastElementChild.classList.toggle("show");
-})
+  toggle.property('className', settings, 'fa fa-gear fa-spin', 'fa fa-gear');
+  toggle.property('className', settings.parentElement.lastElementChild, 'settings-content invisible', 'settings-content visible');
+
+ })
 
 settingsEdit.addEventListener('click',  () => { 
-  if (bored.editmode === false) {
-
-      bored.editmode = true
-      
-      settingsEdit.innerText = 'Close Editor'
-      switchGuides.click()
-      settingsEdit_control.style.display = 'block';
-      squares.map((x) => {
-        x.sound.pause()
-        x.style.backgroundColor =  defaultcolor();
-        x.setAttribute('contenteditable', 'true')
-  
-      })
-
-      const UserMap = document.createElement('option')
-      UserMap.innerText = `User_${map.options.length - 3}`
-
-      Ear.mappings[UserMap.innerText] = Ear.mappings?.[map.selectedOptions[0].label]
-      map.appendChild(UserMap)
-    
-
-    window.addEventListener('keydown', (event) => {if(event.key === 'Enter'){
-      event.preventDefault()
-      const index = squares.findIndex((square) => document.activeElement === square) + 1
-      squares.at((index > 63 ? 0 : index)).focus()
-      const newnote = Ear.notes?.[soundBank.selectedOptions[0].label]?.[soundlength.selectedOptions[0].label].findIndex((x) => x.includes(squares[index - 1].innerText.toUpperCase().replace('#', 'sharp')))
-      console.log(newnote)
-      Ear.mappings[UserMap.innerText].splice(index - 1, 0, newnote)
-      
-      
-    }})
-
-  } else {
-
-    if(!settingsEdit_control.lastElementChild.checked){
-    map.remove(map.length - 1)
-  }
-    bored.editmode = false 
-    settingsEdit.innerText = 'Edit'
-    switchGuides.click()
-    settingsEdit_control.style.display = 'none'
-    
-    squares.map((x) => {
-      x.setAttribute('contenteditable', 'false')
-      x.style.backgroundColor = 'black';
-      
-      
-    })
-
-    window.onkeydown = ''
-
-  }
-
+ board.editMode()
 })
 
 settingsGIF.addEventListener('click', () => {
   navigator.clipboard.writeText(pgnView.innerText);
   alert("Copied Current PGN " + pgnView.innerText);
 })
+
+settingsEditColors.map((x, i) => x.addEventListener('click', () => {
+
+    colorSlideIndicators[i].click()
+}))
 
 settingsResetColor.addEventListener('click', () => {
   squares.map((x) => 
@@ -403,15 +437,82 @@ settingsResetColor.addEventListener('click', () => {
   })
 })
 
-settingsTime_control.addEventListener('click', () => {
+
+// FIXXXX
+settingsTimeControl.addEventListener('click', () => {
   timecontrol.style.display = toggle(timecontrol.style.display, "flex", '')
-  settingsTime_control.innerText = toggle(settingsTime_control.innerText, 'Close Advanced Time Controls', 'Advanced Time Controls')
-  settingsEditTime_control.style.display = 'block'
+  settingsTimeControl.innerText = toggle(settingsTimeControl.innerText, 'x Advanced Time Controls', 'Advanced Time Controls')
+  saveTimeControl.style.display = 'block'
 })
 
-settingsEdit_control.lastElementChild.addEventListener('click', () => {
-  if(settingsEdit_control.lastElementChild.checked){
-    settingsEdit_control.style.display = 'none'
+
+
+// Window Handler // Off Screen Click
+
+window.addEventListener('click', function(event) {
+  // no off screen click
+  if (!event.target.parentElement === settings.parentElement) {
+    console.log(event.target.parentElement)
+    toggle.property('className', settings.parentElement.lastElementChild, 'settings-content invisible', 'settings-content visible')
+    toggle.property('className', settings, 'fa fa-gear fa-spin', 'fa fa-gear')
+    
+  }
+}
+)
+
+
+// TimeControl 
+const slidebtn = [durationCarousel_btn, lapseCarousel_btn];
+slidebtn.map((x) => {
+  
+  x[1].addEventListener('click', () => {
+      toggle.property('className', x[1], "carousel-control-next visible", "carousel-control-next invisible" );
+      x[0].className = "carousel-control-prev visible";
+
+      
+  })
+  x[0].addEventListener('click', () => {
+      toggle.property('className', x[1], "carousel-control-prev visible", "carousel-control-prev invisible" );
+      x[1].className = "carousel-control-next visible";
+      
+  })
+  
+})
+
+  timecontrol1.addEventListener('input', function() {
+    tcDuration_output_ms.textContent = this.value;
+    tcDuration_output_sec.textContent = Math.floor(Number(this.value) / 1000);
+  });
+
+  timecontrol2.addEventListener('input', function() {
+    tcDuration_output_ms.textContent = `[${this.value}]`;
+    tcDuration_output_sec.textContent = `[${this.value.toString().split(',').map((x) => Math.floor(Number(x) / 1000))}]`;
+  });
+
+  timecontrol3.addEventListener('input', function() {
+    tcTL_output_ms.textContent = this.value;
+    tcTL_output_sec.textContent = Math.floor(Number(this.value) / 1000)
+  });
+
+  timecontrol4.addEventListener('input', function() {
+    tcTL_output_ms.textContent = `[${this.value}]`;
+  });
+
+
+
+// Save Changes Checkboxes
+saveTimeControl.lastElementChild.addEventListener('click', () => {
+  if(saveTimeControl.lastElementChild.checked){
+    saveTimeControl.style.display = 'none';
+    settingsTimeControl.click()
+    
+    saveTimeControl.lastElementChild.checked = false
+  }
+})
+
+saveBoard.lastElementChild.addEventListener('click', () => {
+  if(saveBoard.lastElementChild.checked){
+    saveBoard.style.display = 'none'
     
     settingsEdit.click()
     map.lastElementChild.selected = true
@@ -419,27 +520,15 @@ settingsEdit_control.lastElementChild.addEventListener('click', () => {
 }
 )
 
-window.onclick = function(event) {
-  if (!event.target.matches('#btn-settings')) {
-    var dropdowns = document.getElementsByClassName("settings-content");
-    settings.className = 'fa fa-gear fa-spin';
-    var i;
-    for (i = 0; i < dropdowns.length; i++) {
-      var openDropdown = dropdowns[i];
-      if (openDropdown.classList.contains('show')) {
-        openDropdown.classList.remove('show');
-        
-      }
-    }
-  }
-} 
+
+// Start and Record
 
 start.addEventListener('click', async () => {
   const data = PGN()
   const movements = Object.values(data).map((x) => Object.values(x).map((y) => y.square)).filter((x) => x !== undefined)
 
   await StartMusic(movements)
-}
+  }
 )
 
 async function StartMusic(movements, durations, timelapses){
@@ -449,7 +538,7 @@ timelapses = timelapses !== undefined ? Array.isArray(timelapses) ? timelapses :
 timelapses = Array(timelapses).flat(2).map((x) => Number(x))
   
 squares.map((x) => x.piece = '')
-if(switchGuides.value == 3){
+if(selectGuides.value == 3){
     
     switchGuide()
 }
@@ -466,11 +555,8 @@ console.log(data)
 
             if(Array.isArray(square)){
 
-              await sleep(timelapses[i])
-              square[0].click()
-               await sleep(timelapses[i] / 3 )
-              square[1].click()
-
+              square.timelapse = timelapses[i]
+              square.click
             }
             else{
 
@@ -480,7 +566,7 @@ console.log(data)
             }
             
              
-            if(switchGuides.value == 3){
+            if(selectGuides.value == 3){
               Array(square).flat(2).map((x) => {
               let piece = Chess_Unicode[Object.values(turn)[i].piece][Object.values(turn)[i].player][0]
               x.piece = piece[0]
@@ -493,7 +579,6 @@ console.log(data)
         }
     }
 } 
-
 
 async function startCapture() {
 
@@ -517,7 +602,7 @@ async function startCapture() {
 
     const [aTrack] = stream.getAudioTracks();
 
-    const restrictionTarget = await RestrictionTarget.fromElement(bored);
+    const restrictionTarget = await RestrictionTarget.fromElement(board);
 
     await vTrack.restrictTo(restrictionTarget);
 
@@ -530,42 +615,72 @@ async function startCapture() {
   }
 }
 
-[timecontrol_durbtn, timecontrol_timbtn].map((x) => {
-  console.log(x)
-  x[1].addEventListener('click', () => {
-      x[1].className = toggle(x[1].className, "carousel-control-next visible", "carousel-control-next invisible" );
-      x[0].className = "carousel-control-prev visible"
+
+// Board Modes
+
+board.editMode = function(){
+   if (board.edit === false) {
+
+      board.edit = true
       
-  })
-  x[0].addEventListener('click', () => {
-      x[0].className = toggle(x[0].className, "carousel-control-prev visible", "carousel-control-prev invisible" );
-      x[1].className = "carousel-control-next visible"
+      settingsEdit.innerText = 'x Editor';
+
+      selectGuides.click()
+      toggle.property('className', saveBoard, 'saveChanges visibile', + 'saveChanges invisible')
+
+      // Board Apperance 
+      squares,map((x) => x.editable())
       
-  })
-  
-})
 
-  timecontrol1.addEventListener('input', function() {
-    timecontrol1_output.textContent = this.value;
-  });
 
-  timecontrol2.addEventListener('input', function() {
-    timecontrol1_output.textContent = this.value;
-  });
+      // ADD Dropdown 
+      const UserMap = document.createElement('option');
+      const defaultname = `User_${map.options.length - 3}`;
+      UserMap.innerText = defaultname;
+      UserMap.setAttribute('contenteditable', 'true');
 
-  timecontrol3.addEventListener('input', function() {
-    timecontrol3_output.textContent = this.value;
-  });
+      // Copy Value From SelectedOptions
+      Ear.Mappings[defaultname] = Ear.Mappings?.[map.selectedOptions[0].label]
+      map.appendChild(UserMap)
+      
 
-  timecontrol4.addEventListener('input', function() {
-    timecontrol3_output.textContent = this.value;
-  });
+      window.addEventListener('keydown', (event) => {if(event.key === 'Enter'){
+        event.preventDefault()
 
-  settingsEditTime_control.lastElementChild.addEventListener('click', () => {
-  if(settingsEditTime_control.lastElementChild.checked){
+        const index = squares.findIndex((square) => document.activeElement === square) + 1
+        squares.at((index > 63 ? 0 : index)).focus()
+
+        // Save on Save changes as well 
+        const enharmonic = squares[index - 1].innerText.toString().match(/[#b]/) === null ? '#' : squares[index - 1].innerText.toString().match(/[#b]/) 
+        const newindex = Ear.ORDER[enharmonic].findIndex((x) => x === squares[index - 1].innerText)
+        // case senstive not
+
+        console.log(newmap)
+
+        Ear.Mappings[UserMap.innerText].splice(index - 1, 0, newindex)
+        
+        
+      }})
+
+    } else {
+
+    if(!saveBoard.lastElementChild.checked){
+
+      map.remove(map.length - 1)
+
+    }
     
-    settingsTime_control.click()
-    settingsEditTime_control.style.display = 'none';
-    settingsEditTime_control.lastElementChild.checked = false
+      board.editmode = false;
+      settingsEdit.innerText = 'Edit';
+      selectGuides.click();
+      saveBoard.style.display = 'none';
+      
+      squares.map((x) => {
+        x.setAttribute('contenteditable', 'false')
+        x.style.backgroundColor = colorDefault()[2];
+      })
+
+      window.onkeydown = ''
+
+    }
   }
-})

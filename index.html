@@ -1,518 +1,777 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=0.75" />
-<title>soundbored</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
 
-html, body{
-  height: 100%;
-  margin: 0 auto;
-}
-:root{
-  --accent-color :  rgb(128, 0, 255);
-  --bs-btn-active-bg :rgb(128, 0, 255);
-  --bs-btn-active-color: rgb(128, 0, 255);
-  --bs-btn-color: rgb(128, 0, 255);
-  --bs-btn-bg: rgb(128, 0, 255);
-  --bs-btn-border-color:rgb(128, 0, 255) ;
-  --bs-btn-hover-color: white;
-  --bs-btn-hover-bg: rgb(128, 0, 255);
-  --dark:rgb(17, 17, 17);
-}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.5, viewport-fit=contain"  />
+    <title>soundboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
+    <style>
 
-.btn-outline-pri{
-  color: var(--accent-color);
-  background-color: var(--dark);
-  border-color: white;
-}
+    :root{ 
+      --bs-dropdown-min-width: 100%;
+      --accent-color :  rgb(128, 0, 255);
+      --accent-color2: rgb(43, 1, 127);
+      --bs-btn-active-bg : var(--accent-color);
+      --bs-btn-active-color: white;
+      --bs-btn-color: var(--accent-color);
+      --bs-btn-bg: var(--accent-color);
+      --bs-btn-border-color:var(--accent-color) ;
+      --bs-btn-hover-color: white;
+      --bs-btn-hover-bg: var(--accent-color);
+      --dark:rgb(17, 17, 17); 
+    }
 
-.btn-check + .btn:hover{
- border-color: white;
-}
+    /* ELEMENTS */
 
-  body{
-    background: var(--dark);
-    color: white;
-    font-family: "Roboto Mono";
-    width: 100%;
-    display: block;
-  }
+      html{
+        height: 100%;
+        margin: 0 0 0 0;
 
-  span {
-    width: fit-content;
-  }
-  #all {
-    width: 90%;
-    height: 90%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    margin: 20px auto auto auto;
-  }
+      }
 
-  .main{
-    display: flex;
-    flex-direction: column;
-    row-gap: 0px;
-    width: 75%;
-    align-items: center;
-  }
+      body{
+        background: var(--dark);
+        color: white;
+        font-family: "Roboto Mono";
+        width: 100%;
+        display: block;
+      }
 
-  .container{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    padding-top: 10px;
-    width: 100%;
- }
-  
-.bored{
+      #all {
+        width: 90%;
+        height: 90%;
+        display: flex;
+        flex-direction: column;
+     
+        justify-content: flex-start;
+        margin: 20px auto auto auto;
+      }
 
-  display: flex;
-  flex-direction: column;
-  row-gap: 10px;
-  align-items: center;
-  width: 100%;
-    
-}
-
-.boredHeader{
-  display: flex;
-  width: 100%;
-  flex-direction: row;
-  column-gap: 20px;
-  height: 30px;
-  min-width: 440px;
-  max-width: 440px;
-  align-items: center;
-}
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    grid-template-rows: repeat(8, 1fr);
-    gap: 5px; 
-    width: max-content;
-    height: max-content;
-    justify-items: center;
-    align-items: center;
-  }
-
-  .square {
-    width: 50px;
-    min-width: 50%;
-    height: 50px;
-    min-height: 50%;
-    background-color: black;
-    border: 1px solid white ;
-    cursor: pointer;
-    color: white;
-    font-size: 16px;
-    display: flex;
-    flex-direction: row;
-    justify-content:center;
-    align-items: center;
-  }
-  
-#pgnView [contenteditable] {
-  display: inline-block;        
-  width: 350px;                 
-  min-height: 10px;             
-  height: auto;                 
-  padding: 2px;                
-  border: 1px solid rgb(159, 159, 159);       
-  white-space: pre-wrap;        
-  overflow-wrap: break-word;    
-  box-sizing: border-box;       
-  outline: none;  
-  font-family: Verdana, sans-serif;
-  font: 200;
-  color: white;            
-}
-
- #pgn-container{
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    row-gap: 25px;
-    width : 100%;
-    max-width: 435px;
-    min-width: 400px;
-    margin-top: 15px;
- }
-  
- .pgnBox{
-  font-size: 16px;
-  border: 1px solid white;
-  width: 100%;
-  position: relative;
-  top: -15px;
-  min-height: 10px;
-  padding: 5px 5px 5px 5px;
- }
-
- #boredController{
-  min-width: 435px;
-  width: 435px;
-  height: 70px;
-  align-items: flex-start;
-}
-
-.switch {
-    display: inline-block;
-    width: 60px;
-    height: 34px;
-    min-height: 34px;
-    min-width: 60px;
-    position: relative;
-    background-color: rgb(214, 214, 214);
-    border-radius: 34px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-
-
-  .switch::before {
-    content: "";
-    position: absolute;
-    top: 4px;
-    left: 4px;
-    height: 26px;
-    width: 26px;
-    min-width: 26px;
-    min-height: 26px;
-    background-color: rgb(159, 159, 159);
-    border-radius: 50%;
-    transition: transform 0.2s;
-  }
-
-
-  .switch.on {
-    background-color: var(--accent-color);
-  }
-
-
-  .switch.on::before {
-    transform: translateX(26px);
-  }
-
- .wrapperHorizontal{
-  display: flex;
-  column-gap: 10px;
-  
- }
-
- .wrapperVertical{
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  row-gap: 5px;
- }
-
- .knob{
-  width: 32px;
-  border-radius: 50%;
-  font-size: 24px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
- }
-
- 
- #btn-container{
-    display: flex;
-    justify-content: space-between;
-    width : 100%;
-    position: relative;
-    top: -20px;
-    height: 30px;
-    column-gap: 4px;
- }
-
- #btn-container button{
-  width: max-content;
-  max-width: 120px;
-  height: 25px;
- }
-
-#switchGuides label{
-  color: white;
-  font-size: 24px;
-}
-
-
- .settings{
-  font-size: 24px;
-  justify-self: flex-end;
- }
-
- .settings-content {
-  display: none;
-  position: absolute;
-  background-color: #000000;
-  min-width: 110px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 2;
-  max-width: 75px;
-}
-
-.settings-content div {
-  color: rgb(255, 255, 255);
-  padding: 10px 12px;
-  display: flex;
-  flex-direction: column;
-  font-size: 16px;
-
-}
-#settings-colors div {
-  color: rgb(255, 255, 255);
-  display: flex;
-  flex-direction: column;
-  row-gap: 2px;
-  font-size: 16px
-
-}
-
-#settings-record input{
-accent-color: red;
-}
-.settings-content div a{
-  color: rgb(255, 255, 255);
-  font-size: 10px;
-}
-
-.settings-content div:hover {
-  background-color: var(--accent-color);
-}
-
-.show {
-  display:block;
-}
-
-.show_flex {
-  display:flex;
-}
-.edit-soundGridclass{
-  display: none;
-  width: 175px;
-}
-
-select{
-  background-color: #000000;
-  color: white;
-  border: 0px;
-  padding-left: 5px;
-  padding-right: 5px;
-  height: 100%;
-}
-
-select div{
-  display: none;
-  width: 175px;
-  align-self: flex-end;
-  position: relative;
-}
-
-#audioControl, #mapControl{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  column-gap: 10px;
-  height: 100%;
-  outline: 1px solid whi;
-}
-
-#timeControl {
-  display: none;
-  flex-direction: column;
-  width: 100%;
-  row-gap: 15px;
-  height: 150px;
-  margin-bottom: 10px ;
-}
-
-#timeControl button{
-  position: relative;
-  width: 25px;
-}
-
-#timeControl input{
-  width: 95%;
-
-}
-
-#timeControl-durationHolder,  #timeControl-timelapseHolder{
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-}
-
-#timeControlContent1, #timeControlContent2  {
-  display: flex;
-  flex-direction: column;
-}
-
-.visible {
-  visibility: visible !important;
-}
-.invisible {
-  visibility: hidden !important;
-}
-
-
-</style>
-</head>
-<body>
-  <div id="all">
-    <div class="main">
-      <div class="bored"> 
-        <div class="boredHeader">
-          <div id="mapControl">
-            <select id="map" type="dropdown">
-              <option>C Major</option>
-              <option selected>Direct</option>
-              <option>C Major (Middle)</option>
-              <option>Circle of Fifths</option>
-            </select>
-          </div>
-          <div id="audioControl">
-            <select id="soundBank" type="dropdown">
-              <option>
-                GrandPiano 
-              </option>
-              <option selected>GrandPiano2</option>
-            </select>
-            <select id="soundBank-duration" type="dropdown">
-              <option>Short</option>
-              <option selected>Medium</option>
-              <option>Long</option>
-            </select>
-          </div>
-          <div class="settings">
-           <i id="btn-settings" class="fa fa-gear fa-spin"></i>
-              <div id="settings-dropdown" class="settings-content">
-                <div id="settings-edit">
-                    <span> Edit </span>
-                </div>
-                <div id="settings-timeControl">
-                  <span> Advanced Time Controls</span>
-                </div>
-                <div id="settings-gif">
-                  <span> GIF </span>
-                  <a href="https://www.chess.com/gifs"> Chess.com </a>
-                </div>
-                <div id="settings-colors">
-                  <span> Colors : </span>
-                  <div>
-                   <span>Start</span> 
-                   <input id="settings-color" type="color" value="rgb(128, 0, 255)">
-                  </div>
-                  <div>
-                    <span> End</span>
-                    <input id="settings-color2" type="color" value="rgb(43, 1, 127)">
-                  </div>
-                </div>
-                <div id="settings-resetColor">
-                    <span> Reset Color </span>
-                </div>
-                
-              </div>
-          </div>
-        </div>
-        <form id="edit-timeControl" class="edit-soundGridclass">
-            <label> Save Changes </label>
-            <input type="checkbox">
-        </form>
-        <div id="timeControl" class="time">
-          <div id="timeControlContent1">
-            <div>
-              <label for="timeControl-duration" class="form-label">Duration</label> <output for="timeControl-duration1" id="timeControl_duration-output" aria-hidden="true"></output> <span>ms</span>
-            </div>
-            <div id="timeControl-durationHolder" class="carousel slide carousel-fade">
-              <button class="carousel-control-prev invisible" type="button" data-bs-target="#timeControl-durationHolder" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              </button>
-              <div id="timeControl-durations" class="carousel-inner">
-                <input type="range" class="form-range carousel-item active" min="500" max="100000" step="500" value="1500" id="timeControl-duration1">
-                <input class="carousel-item" id="timeControl-duration2" placeholder="[100,]">
-              </div>
-               <button class="carousel-control-next visible" type="button" data-bs-target="#timeControl-durationHolder" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              </button>
-            </div>
-          </div>
-          <div id="timeControlContent2">
-            <div>
-              <label for="timeControl-timelapse" class="form-label">Timelapse</label> <output for="timeControl-timelapse1" id="timeControl_timelapse-output" aria-hidden="true"></output> <span>ms</span>
-            </div>
-            <div id="timeControl-timelapseHolder" class="carousel slide">
-              <button class="carousel-control-prev invisible" type="button" data-bs-target="#timeControl-timelapseHolder" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              </button>
-              <div id="timeControl-timelapses" class="carousel-inner">
-                <input type="range" class="form-range carousel-item active" min="500" max="100000" step="500" value="1500" id="timeControl-timelapse1">
-                <input class="carousel-item" id="timeControl-timelapse2">
-              </div>
-              <button class="carousel-control-next visible" type="button" data-bs-target="#timeControl-timelapseHolder" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              </button>
-            </div>
-          </div>
-        </div>
-        <form id="edit-soundGrid" class="edit-soundGridclass">
-            <label> Save Changes </label>
-            <input type="checkbox">
-        </form>
-        
-        <div class="container">
-          <div class="grid" id="soundGrid"></div>
-        </div>
-        <div id="boredController" class="wrapperHorizontal">
-          <div class="wrapperVertical">
-            
-            <div class="switch on" id="toggleGuides"></div>
-          </div>
-          <div class="wrapperVertical">
-            <div id="switchGuides" class="btn-group" role="group"> 
-              <input id="switchGuides-1" type="radio" class="btn-check" name="btnradio" autocomplete="off" checked></input>
-              <label class="btn btn-outline-pri" for="switchGuides-1">[E4]</label>
-             
-              <input id="switchGuides-2" type="radio" class="btn-check" name="btnradio" autocomplete="off"></input>
-              <label class="btn btn-outline-pri" for="switchGuides-2">&#x1D120</label>
+      .main{
+        display: flex;
+        flex-direction: column;
+        row-gap: 0px;
+        width: 75%;
       
-              <input id="switchGuides-3" type="radio" class="btn-check" name="btnradio" name="switchGuides" autocomplete="off"></input>
-              <label class="btn btn-outline-pri" for="switchGuides-3">&#9817</label>
-            </div> 
-          </div>
-          <div class="knob" id="rotateBored">🗘</div>
-        </div>
-        </div>
-    </div>
-    <div id="pgn-container">
-      <span> PGN | Music </span>
-      <span id="pgnView"  class="pgnBox" contenteditable="true"></span>
-      <div id="btn-container">
-        <input type="file" id="pgnFileInput" />
-        <button id="startButton">Start</button>
-        <button id="process">Download</button>
-      </div>
-    </div>
-  </div>
+      }
 
-<script src="Square.js" type="module"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>  
-<script src="download.js" type="module"></script>
-</body>
+
+
+
+    /* Board */
+
+      .boardContainer{
+          display: flex;
+          align-items: center;
+          position: relative;
+          padding-top: 10px;
+          width: 100%;
+          aspect-ratio: 1 / 1;
+      }
+      
+      .board{
+
+        display: flex;
+        flex-direction: column;
+        row-gap: 10px;
+        width: 100%;
+        min-width: 200px;
+        min-height: 200px;
+          
+      }
+
+      .boardHeader{
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        flex-direction: row;
+        column-gap: 20px;
+        min-width: 100%;
+        max-width: 100%;
+        align-items: center;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        grid-template-rows: repeat(8, 1fr);
+        gap: 5px; 
+        width: 100%;
+        height: 100%;
+        justify-items: center;
+        align-items: center;
+      }
+
+      .square {
+        width: 100%;
+        height: 100%;
+        border: 1px solid white ;
+        cursor: pointer;
+        color: white;
+        font-size: 16px;
+        display: flex;
+        flex-direction: row;
+        justify-content:center;
+        align-items: center;
+      }
+      
+
+
+
+    /* Board Header */
+
+      select{
+        background-color: #000000;
+        color: white;
+        border: 0px;
+        padding-left: 5px;
+        padding-right: 5px;
+        height: 100%;
+      }
+
+      select div{
+        display: none;
+        width: 175px;
+        align-self: flex-end;
+        position: relative;
+      }
+
+      #audioControl, #mapControl{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        column-gap: 10px;
+        height: 100%;
+        outline: 1px solid whi;
+      }
+
+
+
+
+    /* Settings Dropdown */
+
+      .settings{
+        font-size: 24px;
+        justify-self: flex-end;
+      }
+
+      .settings-content {
+        position: absolute;
+        background-color: #000000;
+        min-width: 110px;
+        width: 150px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 2;
+      }
+
+      .settings-content > div{
+        color: rgb(255, 255, 255);
+        padding: 10px 12px;
+        font-size: 16px;
+
+      }
+
+      #settings-record input{
+      accent-color: red;
+      }
+
+      .settings-content div a{
+        color: rgb(255, 255, 255);
+        font-size: 10px;
+      }
+
+      .settings-content > div:hover {
+        background-color: var(--accent-color);
+      }
+
+      #colors-All, #colors-White, #colors-Black{
+        margin: 5px auto auto auto;
+      }
+
+      #colors-slides{
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        width: 100%;
+      }
+
+      #editColors{
+        width: 50px;
+        flex-wrap: nowrap;
+      }
+
+      #editColors label {
+        padding: 0px 0px 0px 0px;
+      }
+
+      .saveChanges{
+        display: none;
+        width: 175px;
+      }
+
+      #timeControl {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        row-gap: 15px;
+        height: 150px;
+        margin-bottom: 10px ;
+      }
+
+      #timeControl button{
+        position: relative;
+        width: 25px;
+      }
+
+      #timeControl input{
+        width: 95%;
+
+      }
+
+      #timeControlContent1, #timeControlContent2  {
+        display: flex;
+        flex-direction: column;
+      }
+
+      #timeControlContent1-OUTPUTS{
+        display: flex;
+        flex-direction: row;
+        column-gap: 15px;
+      }
+
+      output{
+        display: flex;
+        flex-wrap: nowrap;
+        max-width: 200px;
+        height: 20px;
+        overflow-x: scroll;
+        overflow-y: hidden;
+      }
+
+      #timeControl-durationHolder,  #timeControl-timelapseHolder{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+      }
+
+
+
+
+
+    /* Board Controller */
+
+      #boardController{
+        display: flex;
+        align-items: flex-start;
+        column-gap: 15px;
+        min-width: 435px;
+        width: 435px;
+        padding-top: 10px;
+        
+        }
+
+        .switch {
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            min-height: 34px;
+            min-width: 60px;
+            position: relative;
+            background-color: rgb(214, 214, 214);
+            border-radius: 34px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .switch::before {
+          content: "";
+          position: absolute;
+          top: 4px;
+          left: 4px;
+          height: 26px;
+          width: 26px;
+          min-width: 26px;
+          min-height: 26px;
+          background-color: rgb(159, 159, 159);
+          border-radius: 50%;
+          transition: transform 0.2s;
+        }
+
+        .switch.on {
+          background-color: var(--accent-color);
+        }
+
+        .switch.on::before {
+          transform: translateX(26px);
+        }
+
+      #boardController-GroupA{
+        display: flex;
+        column-gap: 15px;
+        min-width: 200px;
+        margin-left: 15px;
+
+      }
+
+      #boardController-GroupA-sub{
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        column-gap: 15px;
+        width: 150px;
+
+      }
+
+      #selectEnharmonic-button{
+        background-color: transparent;
+        width: 10px;
+        border: none;
+        height: 10px;
+      }
+
+      .knob{
+        width: 32px;
+        border-radius: 50%;
+        font-size: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+
+
+
+    /* PGN */
+
+      #pgn-boardContainer{
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+          align-items: flex-start;
+          row-gap: 25px;
+          width : 100%;
+          max-width: 435px;
+          min-width: 400px;
+          margin-top: 15px;
+      }
+        
+      .pgnBox{
+        font-size: 16px;
+        border: 1px solid white;
+        width: 100%;
+        position: relative;
+        top: -15px;
+        min-height: 10px;
+        padding: 5px 5px 5px 5px;
+      }
+
+      #pgnView [contenteditable] {
+        display: inline-block;        
+        width: 350px;                 
+        min-height: 10px;             
+        height: auto;                 
+        padding: 2px;                
+        border: 1px solid rgb(159, 159, 159);       
+        white-space: pre-wrap;        
+        overflow-wrap: break-word;    
+        box-sizing: border-box;       
+        outline: none;  
+        font-family: Verdana, sans-serif;
+        font: 200;
+        color: white;            
+      }
+
+
+
+
+
+    /* Individual Elements*/
+
+        /* BOOTSTRAP OVERIDES */
+         div .OVERIDE-dropdown-menu{
+          min-width: 100%;
+          background: black;
+
+        }
+
+        .OVERIDE-dropdown-item{
+          background-color: black;
+          color: white;
+          
+        }
+         .OVERIDE-dropdown-center{
+         position: relative;
+         display: flex;
+         align-items: flex-start;
+        }
+
+
+        /* ColorPlate */
+        .color-plate{
+          display: grid;
+          width: inherit;
+          grid-template-columns: 50% 50%;
+          column-gap: 10px;
+          row-gap: 10px;
+          padding: 5px 5px 5px 5px;
+        }
+
+        .color-plate div{
+          display: grid;
+          width: inherit;
+          grid-template-columns: 1fr 1fr;
+          column-gap: 10px;
+          row-gap: 10px;
+        }
+
+        .color-plate label{
+          position: relative;
+          left: -5px;
+        }
+
+        /* Button Groups */
+        #selectGuides label, #selectColors label, #editColors label {
+          color: white;
+          font-size: 16px;
+        }
+
+        .btn-check + .btn:hover{
+        border-color: white;
+        }
+
+        /* Span */
+        span {
+            width: fit-content;
+        }
+
+        /* Inputs */
+        .form-range::-moz-range-track{
+          -webkit-appearance: none;
+          appearance: none;
+          height: 3px;
+        }
+
+        .form-range::-moz-range-thumb {
+          width: 15px;
+          height: 15px;
+          background: var(--accent-color);
+          cursor: pointer;
+          position: relative;
+        }
+
+        input[type="color"]::-moz-color-swatch{
+          -webkit-appearance: none;
+          appearance: none;
+          border: none;
+          width: 15px;
+          height: 15px;
+          position: relative;
+          border-radius: 50%;
+        }
+
+        input[type="color"]{
+          width: 15px;
+          height: 15px;
+          border-radius: 50%;
+          border: none;
+          outline: 2px solid white;
+          padding: 0 0 0 0; 
+        }
+
+
+    /* ADD PROPERTY CLASSES */
+
+          /* SHOW */
+        
+          .visible {
+            visibility: visible !important;
+          }
+
+          .invisible {
+            visibility: hidden !important;
+          }
+          
+          /* FLEX */
+          .wrap{
+          flex-wrap: wrap;
+          }
+
+          .horizontal{
+            display: flex;
+            flex-direction: row;
+          }
+
+          .vertical{
+            display: flex;
+            flex-direction: column;
+          }
+          /* SPACING / SIZE */
+          .gap-medium{
+            column-gap: 10px;
+            row-gap: 10px;
+          }
+
+          .width-fitContent{
+            width: fit-content;
+          }
+
+          .width-small{
+            width: 20px;
+          }
+
+          /* Position / Padding / Margin */
+          .absolute{
+            position: absolute;
+          }
+
+
+
+          
+
+    </style>
+
+  </head>
+
+  <body>
+    <div id="all">
+      <div class="main">
+        <div class="board"> 
+          <div class="absolute invisible">
+            <input id="boardEdit-Transposition" type="number" min="-12", max="12" value="0">
+          </div>
+          <div class="boardHeader">
+            <div id="mapControl">
+              <select id="map" type="dropdown">
+                <option>C Major</option>
+                <option selected>Direct</option>
+                <option>C Major (Middle)</option>
+                <option>Circle of Fifths</option>
+              </select>
+              <input id="map-Transposition" type="number" min="-1", max="3" value="0">
+            </div>
+            <div id="audioControl">
+              <select id="soundBank" type="dropdown">
+                <option>
+                  GrandPiano 
+                </option>
+                <option selected>GrandPiano2</option>
+              </select>
+              <select id="soundBank-Duration" type="dropdown">
+                <option>Short</option>
+                <option selected>Medium</option>
+                <option>Long</option>
+              </select>
+              <select id="soundBank-Velocity" type="dropdown">
+                <option>Soft</option>
+                <option selected>Normal</option>
+                <option>Harsh</option>
+              </select>
+            </div>
+            <div class="settings">
+            <i id="settings-btn" class="fa fa-gear fa-spin"></i>
+                <div id="settings-dropdown" class="settings-content invisible">
+                  <div id="settings-edit">
+                      <span> Edit </span>
+                  </div>
+                  <div id="settings-timeControl">
+                    <span> Advanced Time Controls</span>
+                  </div>
+                  <div id="settings-gif" class="vertical">
+                    <span> GIF </span>
+                    <a href="https://www.chess.com/gifs"> Chess.com/gifs </a>
+                  </div>
+                  <div id="settings-colors" class="vertical">
+                    <div class="horizontal gap-medium">
+                      <span>Colors:</span>
+                      <div id="editColors" class="btn-group"  role="group">
+                        <input id="editColors-1" type="radio" class="btn-check" name="btnradio2" autocomplete="off" checked></input>
+                        <label class="btn " for="editColors-1">DFLT</label>
+                      
+                        <input id="editColors-2" type="radio" class="btn-check" name="btnradio2" autocomplete="off"></input>
+                        <label class="btn" for="editColors-2" >W</label>
+                
+                        <input id="editColors-3" type="radio" class="btn-check" name="btnradio2" autocomplete="off"></input>
+                        <label class="btn " for="editColors-3">B</label>
+                      </div>
+                    </div>
+                    <div id="carouselColorsSlide" class="carousel slide carousel">
+                      <div id="Colors-Slide-indicators" class="carousel-indicators invisible">
+                        <button type="button" data-bs-target="#carouselColorsSlide" data-bs-slide-to="0" class="active" aria-current="true"></button>
+                        <button type="button" data-bs-target="#carouselColorsSlide" data-bs-slide-to="1" ></button>
+                        <button type="button" data-bs-target="#carouselColorsSlide" data-bs-slide-to="2" ></button>
+                      </div>
+                      <div id="colors-slides" class="carousel-inner horizontal">
+                        <div class="carousel-item active">
+                          <div id="colors-All" class="color-plate ">
+                            <div>
+                              <input type="color" id="Color-All-1" value="rgb(128, 0, 255)" defaultValue="rgb(128, 0, 255)">
+                              <label for="Color-All-1">1</label>
+                            </div>
+                            <div>
+                              <input type="color" id="Color-All-2" value="rgb(43, 1, 127)" defaultValue="rgb(43, 1, 127)">
+                              <label for="Color-All-2">2</label>
+                            </div>
+                            <div>
+                              <input type="color" id="Color-All-3" value="black">
+                              <label for="Color-All-3">3</label>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="carousel-item">
+                          <div id="colors-White" class="color-plate ">
+                            <div>
+                              <input type="color" id="Color-White-1" value="rgb(128, 0, 255)" defaultValue="rgb(128, 0, 255)">
+                              <label for="Color-White-1">1</label>
+                            </div>
+                            <div>
+                            <input type="color" id="Color-White-2" value="rgb(43, 1, 127)" defaultValue="rgb(43, 1, 127)">
+                              <label for="Color-White-2">2</label> 
+                            </div>
+                          </div>
+                        </div>
+                        <div class="carousel-item">
+                          <div id="colors-Black" class="color-plate ">
+                            <div>
+                              <input type="color" id="Color-Black-1" value="rgb(128, 0, 255)" defaultValue="rgb(128, 0, 255)" >
+                              <label for="Color-Black-1">1</label>
+                            </div>
+                            <div>
+                            <input type="color" id="Color-Black-2" value="rgb(43, 1, 127)" defaultValue="rgb(43, 1, 127)">
+                              <label for="Color-Black-2">2</label> 
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="settings-resetColor">
+                      <span> Reset Color </span>
+                  </div>
+                  <div id="settings-record">
+                      <span> Record </span> 
+                      <input id="settings-record?" type="checkbox" checked>
+                  </div>
+                </div>
+            </div>
+          </div>
+          <form id="save-timeControl" class="saveChanges">
+              <label> Save Changes </label>
+              <input type="checkbox">
+          </form>
+          <div id="timeControl" class="time">
+            <div id="timeControlContent1">
+              <div id="timeControlContent1-OUTPUTS">
+                <label for="timeControl-duration" class="form-label">Duration</label> <output for="timeControl-duration1" id="timeControl-duration-output-ms" aria-hidden="true"></output> <span>ms</span>  / <output for="timeControl-duration1" id="timeControl-duration-output-sec" aria-hidden="true"></output> <span>sec</span>
+              </div>
+              <div id="timeControl-durationHolder" class="carousel slide carousel">
+                <button class="carousel-control-prev invisible" type="button" data-bs-target="#timeControl-durationHolder" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                </button>
+                <div id="timeControl-durations" class="carousel-inner">
+                  <input type="range" class="form-range carousel-item active" min="100" max="10000" step="100" value="1500" defaultValue="1500" id="timeControl-duration1">
+                  <input class="carousel-item" id="timeControl-duration2" placeholder="[100,]">
+                </div>
+                <button class="carousel-control-next visible" type="button" data-bs-target="#timeControl-durationHolder" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                </button>
+              </div>
+            </div>
+            <div id="timeControlContent2">
+              <div>
+                <label for="timeControl-timelapse" class="form-label">Timelapse</label> <output for="timeControl-timelapse1" id="timeControl-timelapse-output-ms" aria-hidden="true"></output> <span>ms</span>   / <output for="timeControl-timelapse1" id="timeControl-timelapse-output-sec" aria-hidden="true"></output> <span>sec</span>
+              </div>
+              <div id="timeControl-timelapseHolder" class="carousel slide">
+                <button class="carousel-control-prev invisible" type="button" data-bs-target="#timeControl-timelapseHolder" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                </button>
+                <div id="timeControl-timelapses" class="carousel-inner">
+                  <input type="range" class="form-range carousel-item active" min="100" max="10000" step="100" value="1500" defaultValue="1500" id="timeControl-timelapse1">
+                  <input class="carousel-item" id="timeControl-timelapse2">
+                </div>
+                <button class="carousel-control-next visible" type="button" data-bs-target="#timeControl-timelapseHolder" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <form id="save-board" class="saveChanges">
+              <label> Save Changes </label>
+              <input type="checkbox">
+          </form>
+          
+          <div class="boardContainer">
+            <div class="grid" id="board"></div>
+          </div>
+          <div id="boardController" class="horizontal">
+            <div class="vertical">
+              <div class="switch on" id="toggleGuides"></div>
+            </div>
+            <div class="horizontal" id="boardController-GroupA">
+              <div class="vertical">
+                <div id="selectGuides" class="btn-group" role="group"> 
+                  <input id="selectGuides-1" type="radio" class="btn-check" name="btnradio" autocomplete="off" checked></input>
+                  <label class="btn" for="selectGuides-1"><span>[E4]</span></label>
+                
+                  <input id="selectGuides-2" type="radio" class="btn-check" name="btnradio" autocomplete="off"></input>
+                  <label class="btn horizontal" for="selectGuides-2">
+                    <span>&#x1D120</span>
+                    <div class="btn-group dropdown-center" role="group" >
+                      <button id="selectEnharmonic-button" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      </button>
+                      <div id="selectEnharmonic" class="dropdown-menu OVERIDE-dropdown-menu"> 
+                        <li id="selectEnharmonic-#" class="dropdown-item width-fitContent OVERIDE-dropdown-item">'#'</li>
+                        <li id="selectEnharmonic-b" class="dropdown-item width-fitContent OVERIDE-dropdown-item">'b'</li>
+                      </div> 
+                    </div>
+                  </label>
+                  <input id="selectGuides-3" type="radio" class="btn-check" name="btnradio" autocomplete="off"></input>
+                  <label class="btn" for="selectGuides-3">&#9817</label>
+                </div> 
+              </div>
+              <div id="boardController-GroupA-sub" class="vertical">
+                <div id="selectColors" class="btn-group"  role="group">
+                  <input id="selectColors-1" type="radio" class="btn-check" name="btnradio1" autocomplete="off" checked></input>
+                  <label class="btn " for="selectColors-1">All</label>
+                
+                  <input id="selectColors-2" type="radio" class="btn-check" name="btnradio1" autocomplete="off"></input>
+                  <label class="btn" for="selectColors-2" >W</label>
+          
+                  <input id="selectColors-3" type="radio" class="btn-check" name="btnradio1" autocomplete="off"></input>
+                  <label class="btn " for="selectColors-3">B</label>
+                </div>
+              </div>
+            </div>
+            <div class="" id="boardController-GroupB">
+              
+            </div>
+            <div class="btn-primary" id="rotateboard">🗘</div>
+          </div>
+          </div>
+      </div>
+      <div id="pgn-boardContainer">
+        <span> PGN | Music </span>
+        <span id="pgnView"  class="pgnBox" contenteditable="true"></span>
+        <div id="btn-group">
+          <input type="file" id="pgnFileInput" />
+          <button id="startButton">Start</button>
+          <button id="process">Download</button>
+        </div>
+      </div>
+
+      
+    </div>
+
+  <script src="Square.js" type="module"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>  
+  <script src="download.js" type="module"></script>
+  </body>
+
 </html>
