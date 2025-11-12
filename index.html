@@ -363,7 +363,7 @@
           margin-top: 15px;
       }
         
-      .pgnBox{
+      .gnBox{
         font-size: 16px;
         border: 1px solid white;
         width: 100%;
@@ -757,19 +757,49 @@
           </div>
       </div>
       <div id="pgn-boardContainer">
-        <span> PGN | Music </span>
-        <span id="pgnView"  class="pgnBox" contenteditable="true"></span>
-        <div id="btn-group">
-          <input type="file" id="pgnFileInput" />
-          <button id="startButton">Start</button>
-          <button id="process">Download</button>
+        <div id="gnSlide-btns" class="btn-group"  role="group">
+            <input id="gnSlide-btn1" type="radio" class="btn-check" name="btnradio-GN" autocomplete="off" checked></input>
+            <label class="btn" for="gnSlide-btn1"><span class="text-label">PGN</span></label>
+                      
+            <input id="gnSlide-btn2" type="radio" class="btn-check" name="btnradio-GN" autocomplete="off"></input>
+            <label class="btn" for="gnSlide-btn2"><span class="">FEN</span></label>
+                
+            <input id="gnSlide-btn3" type="radio" class="btn-check" name="btnradio-GN" autocomplete="off"></input>
+            <label class="btn " for="gnSlide-btn3"><span class="">MUSIC</span></label>
+        </div>
+
+        <div id="gnSlide" class="carousel">
+
+          <div id="gnSlide-indicators" class="carousel-indicators invisible">
+            <button type="button" data-bs-target="#gnSlide" data-bs-slide-to="0" class="active" aria-current="true"></button>
+            <button type="button" data-bs-target="#gnSlide" data-bs-slide-to="1" ></button>
+            <button type="button" data-bs-target="#gnSlide" data-bs-slide-to="2" ></button>
+          </div>
+          
+          <div class="carousel-inner horizontal">
+            <div class="carousel-item active">
+              <span id="pgnView"  class="gnBox" contenteditable="true"></span>
+            </div>
+            <div class="carousel-item">
+              <span id="fenView"  class="gnBox" contenteditable="true"></span>
+            </div>
+            <div class="carousel-item">
+              <span id="musicView"  class="gnBox" contenteditable="true"></span>
+            </div>
+          </div>
+        </div>
+
+        <div id="btn-group" class="horizontal">
+          <input type="file" id="FileInput" />
+          <button id="startButton"><span class="">Start</span></button>
+          <button id="process"><span class="">Download</span></button>
         </div>
       </div>
 
       
     </div>
-
-  <script src="Square.js" type="module"></script>
+  <script src="Element.js" type="module"></script>
+  <script src="Processing.js" type="module"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>  
   <script src="download.js" type="module"></script>
   </body>
